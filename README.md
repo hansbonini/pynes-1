@@ -31,11 +31,11 @@ $ python src/nesemulator.py rom/nestest.nes
 
 Here we have the emulator running:
 
-![running](https://raw.githubusercontent.com/condector/pynes/img/nesrunning.png)
+![running](https://raw.githubusercontent.com/condector/pynes/master/img/nesrunning.png)
 
 and passing all tests:
 
-![running](https://raw.githubusercontent.com/condector/pynes/img/nesrunningok.png)
+![running](https://raw.githubusercontent.com/condector/pynes/master/img/nesrunningok.png)
 
 
 ## Joystick Control Mapping
