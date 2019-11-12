@@ -1,22 +1,19 @@
 # PYNES
 
-This is a  graduation project from José Rafael  Ferraz that implements
-all functionalities  related to  the CPU (not  have time  to implement
-them APU and the second joystick control).
+These is the  undergrad project from José Rafael  Ferraz that implements
+the core functions  of the NES  CPU (the APU and the second joystick control 
+weren't being implemented).
 
-We publish the code and the graduation project (in Portuguese only) to
-allow  others to  learn more  about how  emulation works,  and how  to
-simulate  a   full  hardware.   The  code   was  well   documented  on
-*doc/pynes.pdf*.
-
+We publish the code and the undergrad monography (in Portuguese only) to
+allow  others to  learn more  about how  hardware emulation works. The  code
+was  well   documented  on *doc/pynes.pdf*.
 
 
 ## Source Code
 
-Inside _src_  we have all  emulator source  code and inside  _rom_ the
-nestest.nes  ROM  used  to  validate  the  code  itself  (instructions
-emulated, variables and so on). Also, a log file that was collected
-from the community.
+Inside _src_  we put the  emulator source  code and inside  _rom_ the
+nestest.nes  ROM. This specific ROM validate  the  code  itself  (instructions
+emulated, variables and so on). This binary was collected from the community.
 
 
 ## Requirements and Running
