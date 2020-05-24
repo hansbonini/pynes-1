@@ -32,6 +32,7 @@ class ppu:
         self.firstWrite = True
         self.ppuScrollX = 0
         self.ppuScrollY = 0
+        self.ppuStarted = 0
 
         self.ppuMirroring = 0
         self.addressMirroring = 0
@@ -110,14 +111,18 @@ class ppu:
     def initMemory(self):
         for i in range(len(self.cart.chrRomData)):
             self.VRAM[i] = self.cart.chrRomData[i]
-        self.matrix = [[0]*240 for i in range(256)]
 
         pygame.init()
 
         try:
             self.screen = pygame.display.set_mode((256, 240))
-            self.screen.fill((1, 1, 1))
-            pygame.display.flip()
+            self.layerB = pygame.Surface((256,240))
+            self.layerA = pygame.Surface((256,240), pygame.SRCALPHA)
+            self.layerB.fill((0, 0, 0))
+            self.layerA.fill((0, 0, 0, 0))
+            self.screen.blit(self.layerB, (0,0))
+            self.screen.blit(self.layerA, (0,0))
+            pygame.display.update()
         except:
             print ("Video Error")
 
@@ -285,17 +290,16 @@ class ppu:
         return value
 
     def doScanline(self):
+
         if self.showBackground:
             self.drawBackground()
 
         if self.showSprites:
+            #self.layerA.fill((0,0,0,0))
             self.drawSprites()
 
-        if self.cpu.scanline == 239:
-            for i in range(256):
-                for j in range(240):
-                    pygame.Surface.set_at(self.screen, (i, j), self.matrix[i][j])
-            pygame.display.flip()
+        self.screen.blit(self.layerB, (0,0))
+        self.screen.blit(self.layerA, (0,0))
 
     def drawBackground(self):
         tileY = int(self.cpu.scanline / 8)
@@ -348,11 +352,11 @@ class ppu:
                 colorIndexFinal |= ((bit2 << 1) | bit1)
 
                 color = self.colorPallete[self.VRAM[colorIndexFinal]]
+                x = (pixel + ((j * (-1)) + (toByte - fromByte) - 1))
+                y = self.cpu.scanline
 
-                if i < 32:
-                    self.matrix[(pixel + ((j * (-1)) + (toByte - fromByte) - 1))][self.cpu.scanline] = color
-                else:
-                    self.matrix[(pixel + (j * (-1) + 7))][self.cpu.scanline] = color
+                if (color != pygame.Surface.get_at(self.layerB, (x, y))):
+                    pygame.Surface.set_at(self.layerB, (x, y), color)
 
             pixel += toByte - fromByte
 
@@ -371,7 +375,11 @@ class ppu:
         indexSecondaryOAM = 0
 
         for currentSprite in range(0, 256, 4):
+            spriteX = self.SPRRAM[currentSprite+3]
             spriteY = self.SPRRAM[currentSprite]
+            Y = self.cpu.scanline - spriteY
+            for j in range(8):
+                pygame.Surface.set_at(self.layerA, (spriteX + j, spriteY + Y), (0,0,0,0))
 
             if numberSpritesPerScanline == 8:
                 break
@@ -415,10 +423,9 @@ class ppu:
                     colorIndexFinal = 0x3F00
                 color = self.colorPallete[(self.VRAM[colorIndexFinal] & 0x3F)]
 
-                if color != self.colorPallete[self.VRAM[0x3F10]]:
-                    self.matrix[spriteX + j][spriteY + Y] = color
+                pygame.Surface.set_at(self.layerA, (spriteX + j, spriteY + Y), color)
 
-                if self.showBackground and not(self.spriteHitOccured) and currentSprite == 0 and self.matrix[spriteX + j][spriteY + Y - 1] == color:
+                if self.showBackground and not(self.spriteHitOccured) and currentSprite == 0 and pygame.Surface.get_at(self.layerA, (spriteX + j, spriteY + Y)) == color:
                     self.sprite0Hit = True
                     self.spriteHitOccured = True
 
@@ -427,6 +434,7 @@ class ppu:
             self.cpu.doNMI()
 
         self.VBlank = True
+        pygame.display.update()
 
     def exitVBlank(self):
         self.VBlank = False

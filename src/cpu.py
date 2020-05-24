@@ -369,16 +369,7 @@ class cpu:
         cyclesClock = 0
         a = 0
         self.z = 0
-        ctrl = 0
         while True:
-            ctrl += 1
-            if ctrl > 1000:
-                ctrl = 0
-                pygame.event.poll()
-                joypad.keys=pygame.key.get_pressed()
-                if joypad.keys[pygame.K_ESCAPE] == 1:
-                    exit()
-
             # Executa a instrucao e armazena
             cycles = self.instructions[self.memory[self.registers['PC']]](self)
 
@@ -390,6 +381,11 @@ class cpu:
                     self.ppu.doScanline()
                 elif self.scanline == 241:
                     self.ppu.enterVBlank()
+                    pygame.event.poll()
+                    joypad.keys=pygame.key.get_pressed()
+                    if joypad.keys[pygame.K_ESCAPE] == 1:
+                        exit()
+
                 elif self.scanline == 261:
                     self.scanline = -1
 
