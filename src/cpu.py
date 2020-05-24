@@ -27,7 +27,7 @@ class cpu:
         self.scanline = 0
         self.cart = cartridge
         self.initMemory()
-        self.registers['PC'] = self.memory[0xFFFC] | (self.memory[0xFFFD] << 8)
+        self.registers['PC'] = self.dmaRAMRead(0xFFFC) | (self.dmaRAMRead(0xFFFD) << 8)
         self.count = 0
         self.z = 0
 
@@ -273,27 +273,43 @@ class cpu:
             exit(1)
 
         for i in range(len(self.cart.prgRomData)):
-            self.memory[i + 0x8000] = self.cart.prgRomData[i]
+            self.dmaRAMWrite(i + 0x8000, self.cart.prgRomData[i])
             if self.cart.prgRomCount == 1:
-                self.memory[i + 0xC000] = self.cart.prgRomData[i]
+                self.dmaRAMWrite(i + 0xC000, self.cart.prgRomData[i])
         for i in range(0x20):
-            self.memory[i + 0x4000] = 0xFF
+            self.dmaRAMWrite(i + 0x4000, 0xFF)
 
     def doNMI(self):
         self.pushStack((self.registers['PC'] >> 8) & 0xFF)
         self.pushStack(self.registers['PC'] & 0xFF)
         self.pushStack(self.registers['P'])
-        self.registers['PC'] = self.memory[0xFFFA] | (self.memory[0xFFFB] << 8)
+        self.registers['PC'] = self.dmaRAMRead(0xFFFA) | (self.dmaRAMRead(0xFFFB) << 8)
         self.z = 1
+
+    def dmaRAMWrite(self, address, value):
+        self.memory[address] = value
+        # current = self.memory.tell()
+        # self.memory.seek(address, 0)
+        # self.memory.write(value.to_bytes(0x1, 'little'))
+        # self.memory.seek(current,0)
+
+    def dmaRAMRead(self, address):
+        value = self.memory[address]
+        # current = self.memory.tell()
+        # self.memory.seek(address,0)
+        # value = int.from_bytes(self.memory.read(0x1), 'little')
+        # self.memory.seek(current)
+        return value
+
 
     def writeMemory(self, address, value):
         if address < 0x2000:
             address &= 0x7FF
-            self.memory[address] = value
+            self.dmaRAMWrite(address,value)
         elif address < 0x4000:
             # PPU Registers
             address &= 0x2007
-            self.memory[address] = value
+            self.dmaRAMWrite(address,value)
             if address == 0x2000:
                 self.ppu.processControlReg1(value)
             elif address == 0x2001:
@@ -315,32 +331,32 @@ class cpu:
                 if joypad.LastWrote___ == 1 and value == 0:
                     joypad.ReadNumber__ = 0
                 joypad.LastWrote___ = value
-            self.memory[address] = value
+            self.dmaRAMWrite(address,value)
         elif address < 0x8000:
             pass
         else:
-            self.memory[address] = value
+            self.dmaRAMWrite(address,value)
 
     def readMemory(self, address):
         value = 0x00
         if address < 0x2000:
             address &= 0x7FF
-            value = self.memory[address]
+            value = self.dmaRAMRead(address)
         elif address < 0x4000:
             address &= 0x2007
             if address == 0x2002:
                 value = self.ppu.readStatusFlag()
             elif address == 0x2007:
                 value = self.ppu.readVRAM()
-            self.memory[address] = value
+            self.dmaRAMWrite(address,value)
         elif address < 0x4020:
             if address == 0x4016:
                 joypad.Strobe()
                 value = joypad.KeysBuffer__
             else:
-                value = self.memory[address]
+                value = self.dmaRAMRead(address)
         else:
-            value = self.memory[address]
+            value = self.dmaRAMRead(address)
 
         return value
 
@@ -371,7 +387,8 @@ class cpu:
         self.z = 0
         while True:
             # Executa a instrucao e armazena
-            cycles = self.instructions[self.memory[self.registers['PC']]](self)
+            instr = self.dmaRAMRead(self.registers['PC'])
+            cycles = self.instructions[instr](self)
 
             cyclesClock += cycles
             if cyclesClock > 113:

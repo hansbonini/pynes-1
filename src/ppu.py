@@ -124,7 +124,7 @@ class ppu:
             self.screen.blit(self.layerA, (0,0))
             pygame.display.flip()
         except:
-            print ("Video Error")
+            print ("Initialize Video Error")
 
 
     def setMirroring(self, mirroring):
