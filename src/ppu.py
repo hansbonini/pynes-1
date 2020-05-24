@@ -409,11 +409,14 @@ class ppu:
                     colorIndexFinal = (pattern1 >> (7 - j)) & 0x1
                     colorIndexFinal |= ((pattern2 >> (7 - j)) & 0x1) << 1
 
-                # Se a cor nao eh transparente
                 colorIndexFinal += colorIndex
                 if (colorIndexFinal % 4) == 0:
                     colorIndexFinal = 0x3F00
                 color = self.colorPallete[(self.VRAM[colorIndexFinal] & 0x3F)]
+
+                # Add Transparency
+                if color == self.colorPallete[self.VRAM[0x3F10]]:
+                    color += (0,)
 
                 pygame.Surface.set_at(self.layerA, (spriteX + j, spriteY + Y), color)
 
