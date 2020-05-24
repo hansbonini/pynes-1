@@ -306,7 +306,7 @@ class cpu:
         if address < 0x2000:
             address &= 0x7FF
             self.dmaRAMWrite(address,value)
-        elif address < 0x4000:
+        elif 0x2000 <= address < 0x4000:
             # PPU Registers
             address &= 0x2007
             self.dmaRAMWrite(address,value)
@@ -324,18 +324,22 @@ class cpu:
                 self.ppu.processPPUADDR(value)
             elif address == 0x2007:
                 self.ppu.writeVRAM(value)
-        elif address < 0x4020:
-            if address == 0x4014:
-                self.ppu.writeSprRamDMA(value)
-            elif address == 0x4016:
-                if joypad.LastWrote___ == 1 and value == 0:
-                    joypad.ReadNumber__ = 0
-                joypad.LastWrote___ = value
+        elif 0x4000 <= address < 0x4014 or address == 0x4015:
+            pass # SPU not implemented yet
+        elif address == 0x4014:
+            self.ppu.writeSprRamDMA(value)
             self.dmaRAMWrite(address,value)
-        elif address < 0x8000:
-            pass
+        elif address == 0x4016 or address == 0x4017:
+            if joypad.LastWrote___ == 1 and value == 0:
+                joypad.ReadNumber__ = 0
+            joypad.LastWrote___ = value
+            self.dmaRAMWrite(address,value)
+        elif 0x6000 <= address < 0x8000:
+            pass # SRAM not implemented yet
+        elif 0x8000 <= address < 0x10000:
+            self.dmaRAMWrite(address,value)
         else:
-            self.dmaRAMWrite(address,value)
+            raise Exception('Unhandled RAM access')
 
     def readMemory(self, address):
         value = 0x00
