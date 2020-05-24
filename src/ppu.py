@@ -118,10 +118,13 @@ class ppu:
             self.screen = pygame.display.set_mode((256, 240))
             self.layerB = pygame.Surface((256,240))
             self.layerA = pygame.Surface((256,240), pygame.SRCALPHA)
+            self.debugLayer = pygame.Surface((256,240), pygame.SRCALPHA)
             self.layerB.fill((0, 0, 0))
             self.layerA.fill((0, 0, 0, 0))
+            self.debugLayer.fill((0,0,0,0))
             self.screen.blit(self.layerB, (0,0))
             self.screen.blit(self.layerA, (0,0))
+            self.screen.blit(self.debugLayer, (0,0))
             pygame.display.flip()
         except:
             print ("Initialize Video Error")
@@ -310,6 +313,7 @@ class ppu:
 
         if self.showSprites:
             self.drawSprites()
+            
 
     def drawBackground(self):
         tileY = int(self.cpu.scanline / 8)
@@ -446,9 +450,16 @@ class ppu:
 
         self.screen.blit(self.layerB, (0,0))
         self.screen.blit(self.layerA, (0,0))
+        self.screen.blit(self.debugLayer, (0,0))
         pygame.display.flip()
+        self.debugLayer.fill((0,0,0,0))
         self.layerA.fill((0,0,0,0))
         self.layerB.fill((0,0,0))
 
     def exitVBlank(self):
         self.VBlank = False
+
+    def debugMsg(self, msg):
+        self.debugLayer.fill((0,0,0,0))
+        font = pygame.font.Font(pygame.font.get_default_font(), 8)
+        self.debugLayer.blit(font.render(msg, False, (255, 255, 255, 1), (0,0,0,0)),(4,220))
