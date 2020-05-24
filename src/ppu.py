@@ -133,6 +133,14 @@ class ppu:
         value = self.VRAM[address]
         return value
 
+
+    def dmaSPRRAMWrite(self, address, value):
+        self.SPRRAM[address] = value
+
+    def dmaSPRRAMRead(self, address):
+        value = self.SPRRAM[address]
+        return value
+
     def setMirroring(self, mirroring):
         # 0 = horizontal mirroring
         # 1 = vertical mirroring
@@ -273,14 +281,14 @@ class ppu:
         return value
 
     def writeSprRam(self, value):
-        self.SPRRAM[self.spriteRamAddr] = value
+        self.dmaSPRRAMWrite(self.spriteRamAddr,value)
         self.spriteRamAddr = (self.spriteRamAddr + 1) & 0xFF
 
     def writeSprRamDMA(self, value):
         address = value * 0x100
 
         for i in range(256):
-            self.SPRRAM[i] = self.cpu.dmaRAMRead(address)
+            self.dmaSPRRAMWrite(i, self.cpu.dmaRAMRead(address))
             address += 1
 
     def readStatusFlag(self):
@@ -377,14 +385,14 @@ class ppu:
         indexSecondaryOAM = 0
 
         for currentSprite in range(0, 256, 4):
-            spriteY = self.SPRRAM[currentSprite]
+            spriteY = self.dmaSPRRAMRead(currentSprite)
 
             if numberSpritesPerScanline == 8:
                 break
 
             if self.cpu.scanline >= spriteY and self.cpu.scanline < spriteY + self.spriteSize:
                 for i in range(4):
-                    secondaryOAM[indexSecondaryOAM + i] = self.SPRRAM[currentSprite + i]
+                    secondaryOAM[indexSecondaryOAM + i] = self.dmaSPRRAMRead(currentSprite+i)
                 indexSecondaryOAM += 4
                 numberSpritesPerScanline += 1
 
