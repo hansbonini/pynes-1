@@ -122,7 +122,7 @@ class ppu:
             self.layerA.fill((0, 0, 0, 0))
             self.screen.blit(self.layerB, (0,0))
             self.screen.blit(self.layerA, (0,0))
-            pygame.display.update()
+            pygame.display.flip()
         except:
             print ("Video Error")
 
@@ -295,11 +295,7 @@ class ppu:
             self.drawBackground()
 
         if self.showSprites:
-            #self.layerA.fill((0,0,0,0))
             self.drawSprites()
-
-        self.screen.blit(self.layerB, (0,0))
-        self.screen.blit(self.layerA, (0,0))
 
     def drawBackground(self):
         tileY = int(self.cpu.scanline / 8)
@@ -375,11 +371,7 @@ class ppu:
         indexSecondaryOAM = 0
 
         for currentSprite in range(0, 256, 4):
-            spriteX = self.SPRRAM[currentSprite+3]
             spriteY = self.SPRRAM[currentSprite]
-            Y = self.cpu.scanline - spriteY
-            for j in range(8):
-                pygame.Surface.set_at(self.layerA, (spriteX + j, spriteY + Y), (0,0,0,0))
 
             if numberSpritesPerScanline == 8:
                 break
@@ -434,7 +426,12 @@ class ppu:
             self.cpu.doNMI()
 
         self.VBlank = True
-        pygame.display.update()
+
+        self.screen.blit(self.layerB, (0,0))
+        self.screen.blit(self.layerA, (0,0))
+        pygame.display.flip()
+        self.layerA.fill((0,0,0,0))
+        self.layerB.fill((0,0,0))
 
     def exitVBlank(self):
         self.VBlank = False
