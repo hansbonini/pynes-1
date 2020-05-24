@@ -272,10 +272,10 @@ class cpu:
             print ("Mapper not available yet")
             exit(1)
 
-        for i in range(len(self.cart.prgRomData)):
-            self.dmaRAMWrite(i + 0x8000, self.cart.prgRomData[i])
+        for k,v in enumerate(self.cart.prgRomData):
+            self.dmaRAMWrite(k + 0x8000, v)
             if self.cart.prgRomCount == 1:
-                self.dmaRAMWrite(i + 0xC000, self.cart.prgRomData[i])
+                self.dmaRAMWrite(k + 0xC000, v)
         for i in range(0x20):
             self.dmaRAMWrite(i + 0x4000, 0xFF)
 
