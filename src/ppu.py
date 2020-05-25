@@ -1,12 +1,12 @@
 import pygame
-
+import numpy as np
 class ppu:
 
     def __init__(self, cpu, cartridge):
         self.cpu = cpu
 
-        self.VRAM = [0x00] * 0x10000
-        self.SPRRAM = [0x00] * 0x100
+        self.VRAM = [np.uint8(0x00)] * 0x10000
+        self.SPRRAM = [np.uint8(0x00)] * 0x100
 
         self.nameTableAddress = 0
         self.incrementAddress = 1
@@ -109,9 +109,13 @@ class ppu:
                              (0x00, 0x00, 0x00)]
 
     def initMemory(self):
-        for k,v in enumerate(self.cart.chrRomData):
+        #for k,v in enumerate(self.cart.chrRomData):
+        maxdata = len(self.cart.chrRomData)
+        k = 0
+        while k < maxdata:
+            v=self.cart.chrRomData[k]
             self.dmaVRAMWrite(k, v)
-
+            k+=1
         pygame.init()
 
         try:
@@ -290,9 +294,11 @@ class ppu:
     def writeSprRamDMA(self, value):
         address = value * 0x100
 
-        for i in range(256):
+        i=0
+        while i < 256:
             self.dmaSPRRAMWrite(i, self.cpu.dmaRAMRead(address))
             address += 1
+            i+=1
 
     def readStatusFlag(self):
         value = 0
@@ -327,7 +333,8 @@ class ppu:
         v = int(self.nameTableAddress + currentTile)
         pixel = 0
 
-        for i in range(0 if self.clippingBackground else 1, maxTiles):
+        i=0 if self.clippingBackground else 1
+        while i < maxTiles:
 
             fromByte = 0
             toByte = 8
@@ -360,7 +367,8 @@ class ppu:
             else:
                 colorIndex |= ((byteAttributeTable & 0b11000000) >> 6) << 2
 
-            for j in range(fromByte, toByte):
+            j=fromByte
+            while j < toByte:
                 bit1 = ((1 << j) & pattern1) >> j
                 bit2 = ((1 << j) & pattern2) >> j
                 colorIndexFinal = colorIndex
@@ -372,6 +380,7 @@ class ppu:
 
                 if (color != pygame.Surface.get_at(self.layerB, (x, y))):
                     pygame.Surface.set_at(self.layerB, (x, y), color)
+                j+=1
 
             pixel += toByte - fromByte
 
@@ -381,6 +390,8 @@ class ppu:
                 v ^= 0x400
             else:
                 v += 1
+            
+            i+=1
 
 
     def drawSprites(self):
@@ -422,7 +433,8 @@ class ppu:
 
             colorIndex |= ((secondaryOAM[currentSprite +2] & 0x3) << 2)
 
-            for j in range(8):
+            j=0
+            while j < 8:
                 if flipHorizontal:
                     colorIndexFinal = (pattern1 >> j) & 0x1
                     colorIndexFinal |= ((pattern2 >> j) & 0x1 ) << 1
@@ -444,6 +456,7 @@ class ppu:
                 if self.showBackground and not(self.spriteHitOccured) and currentSprite == 0 and pygame.Surface.get_at(self.layerA, (spriteX + j, spriteY + Y)) == color:
                     self.sprite0Hit = True
                     self.spriteHitOccured = True
+                j+=1
 
     def enterVBlank(self):
         if self.NMI:

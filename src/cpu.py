@@ -1,4 +1,5 @@
 import pygame
+import numpy as np
 import time
 import instructions
 from ppu import ppu
@@ -24,7 +25,7 @@ class cpu:
                             'v': 6,      #Overflow Flag
                             'n': 7 }     #Negative Flag
 
-        self.memory = [0] * 0x10000
+        self.memory = [0x00] * 0x10000
         self.scanline = 0
         self.cart = cartridge
         self.initMemory()
@@ -273,12 +274,18 @@ class cpu:
             print ("Mapper not available yet")
             exit(1)
 
-        for k, v in enumerate(self.cart.prgRomData):
-            self.dmaRAMWrite(k + 0x8000, v)
+        i=0
+        maxdata = len(self.cart.prgRomData)
+        while i < maxdata:
+            v = self.cart.prgRomData[i]
+            self.dmaRAMWrite(i + 0x8000, v)
             if self.cart.prgRomCount == 1:
-                self.dmaRAMWrite(k + 0xC000, v)
-        for i in range(0x20):
+                self.dmaRAMWrite(i + 0xC000, v)
+            i+=1
+        i=0
+        while i < 0x20:
             self.dmaRAMWrite(i + 0x4000, 0xFF)
+            i+=1
 
     def doNMI(self):
         self.pushStack((self.registers['PC'] >> 8) & 0xFF)
