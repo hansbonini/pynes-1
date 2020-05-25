@@ -322,6 +322,7 @@ class ppu:
             
 
     def drawBackground(self):
+        matrix = pygame.PixelArray(self.layerB)
         tileY = int(self.cpu.scanline / 8)
         Y = int(self.cpu.scanline % 8)
 
@@ -378,8 +379,8 @@ class ppu:
                 x = (pixel + ((j * (-1)) + (toByte - fromByte) - 1))
                 y = self.cpu.scanline
 
-                if (color != pygame.Surface.get_at(self.layerB, (x, y))):
-                    pygame.Surface.set_at(self.layerB, (x, y), color)
+                if (color != matrix[x][y]):
+                    matrix[x][y] = color
                 j+=1
 
             pixel += toByte - fromByte
@@ -392,6 +393,7 @@ class ppu:
                 v += 1
             
             i+=1
+        del matrix
 
 
     def drawSprites(self):

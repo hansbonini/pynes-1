@@ -413,7 +413,7 @@ class cpu:
 
             cyclesClock += cycles
             if (time.perf_counter() - timer) > 1:
-                fpsCounter = int(loopCounter)
+                fpsCounter = int(loopCounter/100)
                 timer = time.perf_counter()
                 loopCounter = 0
             cyclesCounter = cyclesClock
@@ -423,12 +423,10 @@ class cpu:
                 if 0 <= self.scanline < 240:
                     if self.ppu.VBlank:
                         self.ppu.exitVBlank()
-                        loopCounter+=1
                     self.ppu.doScanline()
                 elif self.scanline == 241:
                     self.ppu.debugMsg("Cycles {0} | FPS: {1}".format(cyclesCounter, fpsCounter))
                     cyclesCounter = 0
-                    loopCounter += 1
                     self.ppu.enterVBlank()
                     joypad.keys = pygame.key.get_pressed()
                     if joypad.keys[pygame.K_ESCAPE] == 1:
@@ -436,3 +434,4 @@ class cpu:
                 elif self.scanline == 261:
                     self.scanline = -1
                 self.scanline += 1
+                loopCounter+=1
