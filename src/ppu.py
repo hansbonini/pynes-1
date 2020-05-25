@@ -320,7 +320,6 @@ class ppu:
         Y = int(self.cpu.scanline % 8)
 
         maxTiles = 32
-
         if (self.ppuScrollX % 8) != 0:
             maxTiles = 33
 
@@ -333,11 +332,12 @@ class ppu:
             fromByte = 0
             toByte = 8
 
-            if (self.ppuScrollX % 8) != 0:
+            ppuScrollFlag = (self.ppuScrollX %8)
+            if ppuScrollFlag != 0:
                 if i == 0:
-                    toByte = 7 - (self.ppuScrollX % 8)
+                    toByte = 7 - (ppuScrollFlag)
                 if i == (maxTiles - 1):
-                    fromByte = 8 - (self.ppuScrollX % 8)
+                    fromByte = 8 - (ppuScrollFlag)
 
             ptrAddress = self.dmaVRAMRead(v + int(tileY*0x20))
             pattern1 = self.dmaVRAMRead(self.backgroundPatternTable + (ptrAddress*16) + Y)
@@ -350,12 +350,13 @@ class ppu:
             byteAttributeTable = self.dmaVRAMRead(addressByte)
             colorIndex = 0x3F00
 
-            if blockX < 2 and blockY < 2:
-                colorIndex |= (byteAttributeTable & 0b11) << 2
+            if blockX < 2:
+                if blockY >= 2:
+                    colorIndex |= ((byteAttributeTable & 0b110000) >> 4) << 2
+                else:
+                    colorIndex |= (byteAttributeTable & 0b11) << 2
             elif blockX >= 2 and blockY < 2:
                 colorIndex |= ((byteAttributeTable & 0b1100) >> 2) << 2
-            elif blockX < 2 and blockY >= 2:
-                colorIndex |= ((byteAttributeTable & 0b110000) >> 4) << 2
             else:
                 colorIndex |= ((byteAttributeTable & 0b11000000) >> 6) << 2
 
@@ -394,7 +395,7 @@ class ppu:
             if numberSpritesPerScanline == 8:
                 break
 
-            if self.cpu.scanline >= spriteY and self.cpu.scanline < spriteY + self.spriteSize:
+            if spriteY <= self.cpu.scanline < spriteY + self.spriteSize:
                 for i in range(4):
                     secondaryOAM[indexSecondaryOAM + i] = self.dmaSPRRAMRead(currentSprite+i)
                 indexSecondaryOAM += 4
@@ -407,14 +408,16 @@ class ppu:
             if spriteY >= 0xEF or spriteX >= 0xF9:
                 continue
 
-            flipVertical = secondaryOAM[currentSprite + 2] & 0x80
-            flipHorizontal = secondaryOAM[currentSprite + 2] & 0x40
+            currentSpriteAddress = currentSprite + 2
+            flipVertical = secondaryOAM[currentSpriteAddress] & 0x80
+            flipHorizontal = secondaryOAM[currentSpriteAddress] & 0x40
 
             Y = self.cpu.scanline - spriteY
 
             ptrAddress = secondaryOAM[currentSprite + 1]
-            pattern1 = self.dmaVRAMRead(self.spritePatternTable + (ptrAddress * 16) + ((7 - Y) if flipVertical else Y))
-            pattern2 = self.dmaVRAMRead(self.spritePatternTable + (ptrAddress * 16) + ((7 - Y) if flipVertical else Y) + 8)
+            patAddress = self.spritePatternTable + (ptrAddress * 16) + ((7 - Y) if flipVertical else Y)
+            pattern1 = self.dmaVRAMRead(patAddress)
+            pattern2 = self.dmaVRAMRead(patAddress + 8)
             colorIndex = 0x3F10
 
             colorIndex |= ((secondaryOAM[currentSprite +2] & 0x3) << 2)
@@ -447,17 +450,16 @@ class ppu:
             self.cpu.doNMI()
 
         self.VBlank = True
-
         self.screen.blit(self.layerB, (0,0))
         self.screen.blit(self.layerA, (0,0))
         self.screen.blit(self.debugLayer, (0,0))
         pygame.display.flip()
+    def exitVBlank(self):
+        self.VBlank = False
         self.debugLayer.fill((0,0,0,0))
         self.layerA.fill((0,0,0,0))
         self.layerB.fill((0,0,0))
-
-    def exitVBlank(self):
-        self.VBlank = False
+        pygame.display.flip()
 
     def debugMsg(self, msg):
         self.debugLayer.fill((0,0,0,0))

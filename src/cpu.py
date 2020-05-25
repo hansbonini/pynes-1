@@ -1,5 +1,6 @@
-import instructions
 import pygame
+import time
+import instructions
 from ppu import ppu
 import joypad
 
@@ -309,7 +310,6 @@ class cpu:
         elif 0x2000 <= address < 0x4000:
             # PPU Registers
             address &= 0x2007
-            self.dmaRAMWrite(address, value)
             if address == 0x2000:
                 self.ppu.processControlReg1(value)
             elif address == 0x2001:
@@ -324,6 +324,7 @@ class cpu:
                 self.ppu.processPPUADDR(value)
             elif address == 0x2007:
                 self.ppu.writeVRAM(value)
+            self.dmaRAMWrite(address, value)
         elif 0x4000 <= address < 0x4014 or address == 0x4015:
             pass # SPU not implemented yet
         elif address == 0x4014:
@@ -348,17 +349,16 @@ class cpu:
             value = self.dmaRAMRead(address)
         elif 0x2000 <= address < 0x4000:
             addrflag = (address-0x2000)&0xF
-            print(addrflag)
             if addrflag == 2:
                 value = self.ppu.readStatusFlag()
-            elif addrflag == 4:
+            elif addrflag == 7:
                 value = self.ppu.readVRAM()
             self.dmaRAMWrite(address, value)
         elif address == 0x4016:
             joypad.Strobe()
             value = joypad.KeysBuffer__
-        #elif 0x4000 < address < 0x4020:
-        #   value = self.dmaRAMRead(address)
+        elif 0x4000 < address < 0x4020:
+            value = self.dmaRAMRead(address)
         elif 0x6000 <= address < 0x8000:
             pass # SRAM not implemented yet
         elif 0x8000 <= address < 0x10000:
@@ -393,34 +393,39 @@ class cpu:
         cyclesClock = 0
         a = 0
         loopCounter = 0
+        fpsCounter = 0
         cyclesCounter = 0
+        timer = time.perf_counter()
         self.z = 0
-        while True:
+        while 1:
+            pygame.event.poll()
+
             # Executa a instrucao e armazena
             instr = self.dmaRAMRead(self.registers['PC'])
             cycles = self.instructions[instr](self)
 
             cyclesClock += cycles
-            fpsCounter = loopCounter/1000
+            if (time.perf_counter() - timer) > 1:
+                fpsCounter = int(loopCounter)
+                timer = time.perf_counter()
+                loopCounter = 0
             cyclesCounter = cyclesClock
-            if cyclesClock > 113:
-                cyclesClock = 0
 
-                if self.scanline >= 0 and self.scanline < 240:
+            if cyclesClock >= 113:
+                cyclesClock = 0
+                if 0 <= self.scanline < 240:
+                    if self.ppu.VBlank:
+                        self.ppu.exitVBlank()
+                        loopCounter+=1
                     self.ppu.doScanline()
                 elif self.scanline == 241:
                     self.ppu.debugMsg("Cycles {0} | FPS: {1}".format(cyclesCounter, fpsCounter))
-                    loopCounter = 0
                     cyclesCounter = 0
+                    loopCounter += 1
                     self.ppu.enterVBlank()
-                    pygame.event.poll()
                     joypad.keys = pygame.key.get_pressed()
                     if joypad.keys[pygame.K_ESCAPE] == 1:
                         exit()
-
                 elif self.scanline == 261:
                     self.scanline = -1
-
                 self.scanline += 1
-
-            loopCounter += 1
