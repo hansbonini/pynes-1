@@ -11,17 +11,22 @@ class Console:
         romPath = sys.argv[1]
 
         self.cartridge = romLoader(romPath)
-
-        #try:
-        self.cartridge.load()
-        #except:
-        #    print("Couldn't load NES cartridge")
-
+        self.RENDERER_TYPE = "pygame"
         self.THREAD_MODE = "SINGLE"
 
-        self.CPU = CPU(self)
-        self.PPU = PPU(self)
+        try:
+            self.cartridge.load()
+        except:
+            raise Exception("Couldn't load cartridge")
 
+        try:
+            self.CPU = CPU(self)
+        except:
+            raise Exception("Couldn't initialize CPU") 
+        try:      
+            self.PPU = PPU(self)
+        except:
+            raise Exception("Couldn't initialize PPU")      
 
     def powerOn(self):
         if self.THREAD_MODE == "SINGLE":

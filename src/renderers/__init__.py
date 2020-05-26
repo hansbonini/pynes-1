@@ -1,1 +1,1 @@
-__all__ = ["pygame"]
+__all__ = ["pygame", "ncurse", "pyglet"]

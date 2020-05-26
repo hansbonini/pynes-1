@@ -280,9 +280,10 @@ class CPU:
         }
 
         self.RAM = self.VolatileMemory(0x10000)
+        self.InterruptRequest = multiprocessing.Value("c")
+        self.InterruptRequest = 0x52 # R
         self.cart = self.console.cartridge
         self.load_ram_data()
-        self.registers['PC'] = self.RAM.read(0xFFFC) | (self.RAM.read(0xFFFD) << 8)
         self.scanline = 0
         self.count = 0
         self.z = 0
@@ -308,12 +309,19 @@ class CPU:
             self.RAM.write(i + 0x4000, 0xFF)
             i+=1
 
-    def doNMI(self):
+    def doInterruptRequest(self):
         self.pushStack((self.registers['PC'] >> 8) & 0xFF)
         self.pushStack(self.registers['PC'] & 0xFF)
         self.pushStack(self.registers['P'])
-        self.registers['PC'] = self.RAM.read(0xFFFA) | (self.RAM.read(0xFFFB) << 8)
-        self.z = 1
+
+        if self.InterruptRequest == 0x4E: # N for NMI
+            self.registers['PC'] = self.RAM.read(0xFFFA) | (self.RAM.read(0xFFFB) << 8)
+            self.z = 1
+        elif self.InterruptRequest == 0x52: # R for RESET
+            self.registers['PC'] = self.RAM.read(0xFFFC) | (self.RAM.read(0xFFFD) << 8)
+        elif self.InterruptRequest == 0x49 and not self.statusFlags['i']: # I for INTERRUPT MASK
+            self.registers['PC'] = self.RAM.read(0xFFFE) | (self.RAM.read(0xFFFF) << 8)
+        self.InterruptRequest = 0x00
 
     def writeMemory(self, address, value):
         if address < 0x2000:
@@ -412,6 +420,10 @@ class CPU:
         while True:
             pygame.event.poll()
 
+            # Interrupts
+            if self.InterruptRequest != 0x00:
+                self.doInterruptRequest()
+
             # Executa a instrucao e armazena
             instr = self.RAM.read(self.registers['PC'])
             cycles = self.instructions[instr](self)
@@ -435,6 +447,7 @@ class CPU:
                 if 0 <= self.scanline < 240 and not self.console.PPU.VBLANK.status:
                     self.console.PPU.doScanline()                
                 elif self.scanline == 240 and not self.console.PPU.VBLANK.status:
+                    #print("Cycles {0} | FPS: {1} | Scanline: {2}".format(cyclesCounter, fpsCounter, self.scanline))
                     self.console.PPU.renderer.display.DEBUG_LAYER.text("Cycles {0} | FPS: {1}".format(cyclesCounter, fpsCounter))
                     cyclesCounter = 0
                     self.console.PPU.VBLANK.enter()

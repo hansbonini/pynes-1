@@ -24,7 +24,7 @@ class PPU:
         
         def enter(self):
             if self._console.PPU.NMI:
-                self._console.CPU.doNMI()
+                self._console.CPU.InterruptRequest = 0x4E # N
             self.status = True
             while True:
                 try:
@@ -134,10 +134,10 @@ class PPU:
                              (0x00, 0x00, 0x00),
                              (0x00, 0x00, 0x00)]
 
-        try:
-            self.renderer = RendererManager()
-        except:
-            print ("Cannot initialize Renderer")
+        #try:
+        self.renderer = RendererManager(self.console.RENDERER_TYPE)
+        #except:
+        #    print ("Cannot initialize Renderer")
 
         self.VBLANK = self.VBlank(self.console)
         self.VRAM = self.VolatileMemory(0x10000)

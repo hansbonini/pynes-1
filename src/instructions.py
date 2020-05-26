@@ -479,7 +479,7 @@ def BRK_Implied(cpu):
     cpu.setStatus(cpu.statusFlags['b'], 1)
     cpu.pushStack(cpu.registers['P'])
     cpu.setStatus(cpu.statusFlags['i'], 1)
-    cpu.registers['PC'] = (cpu.readMemory(0xFFFE) | (cpu.readMemory(0xFFFF) << 8))
+    cpu.InterruptRequest = 0x49
     advancePC(cpu, size)
     return nCycles
 
