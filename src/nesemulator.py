@@ -12,10 +12,10 @@ class Console:
 
         self.cartridge = romLoader(romPath)
 
-        try:
-            self.cartridge.load()
-        except:
-            print("Couldn't load NES cartridge")
+        #try:
+        self.cartridge.load()
+        #except:
+        #    print("Couldn't load NES cartridge")
 
         self.THREAD_MODE = "SINGLE"
 
@@ -24,9 +24,12 @@ class Console:
 
 
     def powerOn(self):
-        self.CPU.run()
-    #     self.CPU.start()
-    #     self.PPU.start()
+        if self.THREAD_MODE == "SINGLE":
+            self.PPU.run()
+            self.CPU.run()
+        else:
+            self.CPU.start()
+            self.PPU.start()
 
 if __name__ == '__main__':
     console = Console()

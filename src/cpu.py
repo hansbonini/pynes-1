@@ -9,8 +9,7 @@ import joypad
 
 class CPU:
 
-    class VolatileMemory:
-    
+    class VolatileMemory:  
         def __init__(self, size):
             self.ram = array('B', [0x00] * size)
 
@@ -429,16 +428,16 @@ class CPU:
                 if joypad.keys[pygame.K_ESCAPE] == 1:
                     exit()
                 self.clock.value = 0
-                if self.console.PPU.VBlank:
-                    self.console.PPU.exitVBlank()
+                if self.console.PPU.VBLANK.status:
+                    self.console.PPU.VBLANK.exit()
                     if not self.console.THREAD_MODE == "SINGLE":
                         self.end.set()
-                if 0 <= self.scanline < 240 and not self.console.PPU.VBlank:
-                    self.console.PPU.doScanline(self.scanline)                
-                elif self.scanline == 240 and not self.console.PPU.VBlank:
-                    self.console.PPU.debugMsg("Cycles {0} | FPS: {1}".format(cyclesCounter, fpsCounter))
+                if 0 <= self.scanline < 240 and not self.console.PPU.VBLANK.status:
+                    self.console.PPU.doScanline()                
+                elif self.scanline == 240 and not self.console.PPU.VBLANK.status:
+                    self.console.PPU.renderer.display.DEBUG_LAYER.text("Cycles {0} | FPS: {1}".format(cyclesCounter, fpsCounter))
                     cyclesCounter = 0
-                    self.console.PPU.enterVBlank()
+                    self.console.PPU.VBLANK.enter()
                 elif self.scanline == 254:
                     self.scanline = -1
                 self.scanline += 1

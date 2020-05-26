@@ -1,13 +1,13 @@
-import pygame
 import threading
 import multiprocessing
 import time
 from array import array
 
+from renderer import RendererManager
+
 class PPU:
 
     class VolatileMemory:
-
         def __init__(self, size):
             self.ram = array('B', [0x00] * size)
 
@@ -16,6 +16,26 @@ class PPU:
 
         def write(self, a=0x0, v=0x0):
             self.ram[a] = v
+
+    class VBlank:
+        def __init__(self, console):
+            self.status = False
+            self._console = console
+        
+        def enter(self):
+            if self._console.PPU.NMI:
+                self._console.CPU.doNMI()
+            self.status = True
+            while True:
+                try:
+                    self._console.PPU.renderer.display.blit()
+                    break
+                except:
+                    pass
+
+        def exit(self):
+            self.status = False
+            self._console.PPU.renderer.display.clear()
 
     def __init__(self, console=None):
         print("Initializing PPU...")
@@ -39,7 +59,6 @@ class PPU:
         self.scanlineSpriteCount = 0
         self.sprite0Hit = 0
         self.spriteHitOccured = False
-        self.VBlank = False
         self.VRAMAddress = 0
         self.VRAMBuffer = 0
         self.firstWrite = True
@@ -115,38 +134,28 @@ class PPU:
                              (0x00, 0x00, 0x00),
                              (0x00, 0x00, 0x00)]
 
+        try:
+            self.renderer = RendererManager()
+        except:
+            print ("Cannot initialize Renderer")
+
+        self.VBLANK = self.VBlank(self.console)
         self.VRAM = self.VolatileMemory(0x10000)
         self.SPRRAM = self.VolatileMemory(0x100)
 
         self.load_vram_data()
         self.setMirroring(self.console.cartridge.mirror)
-        
+
         super(PPU, self).__init__()
 
     def load_vram_data(self):
-        #for k,v in enumerate(self.console.cartridge.chrRomData):
         maxdata = self.console.cartridge.chrRomData.__len__()
         k = 0
         while k < maxdata:
             v=self.console.cartridge.chrRomData[k]
             self.VRAM.write(k, v)
             k+=1
-
-        try:
-            pygame.init()
-            self.screen = pygame.display.set_mode((256, 240))
-            self.layerB = pygame.Surface((256,240))
-            self.layerA = pygame.Surface((256,240), pygame.SRCALPHA)
-            self.debugLayer = pygame.Surface((256,240), pygame.SRCALPHA)
-            self.layerB.fill((0, 0, 0))
-            self.layerA.fill((0, 0, 0, 0))
-            self.debugLayer.fill((0,0,0,0))
-            self.screen.blit(self.layerB, (0,0))
-            self.screen.blit(self.layerA, (0,0))
-            self.screen.blit(self.debugLayer, (0,0))
-            pygame.display.flip()
-        except:
-            print ("Initialize Video Error")
+        self.renderer.display.reset()
 
     def setMirroring(self, mirroring):
         # 0 = horizontal mirroring
@@ -305,24 +314,23 @@ class PPU:
         value |= (self.vRamWrites << 4)
         value |= (self.scanlineSpriteCount << 5)
         value |= (self.sprite0Hit << 6)
-        value |= (int(self.VBlank) << 7)
+        value |= (int(self.VBLANK.status) << 7)
 
         self.firstWrite = True
-        self.VBlank = False
+        self.VBLANK.exit()
 
         return value
 
-    def doScanline(self, scanline):
+    def doScanline(self):
 
         if self.showBackground:
-            self.drawBackground(scanline)
+            self.drawBackground(self.console.CPU.scanline)
 
         if self.showSprites:
-            self.drawSprites(scanline)
+            self.drawSprites(self.console.CPU.scanline)
             
 
     def drawBackground(self, scanline):
-        matrix = pygame.PixelArray(self.layerB)
         tileY = int(scanline / 8)
         Y = int(scanline % 8)
 
@@ -380,8 +388,8 @@ class PPU:
                 x = (pixel + ((j * (-1)) + (toByte - fromByte) - 1))
                 y = scanline
 
-                if (color != matrix[x][y]):
-                    matrix[x][y] = color
+                if (color != self.renderer.display.LAYER_B.read(x, y)):
+                    self.renderer.display.LAYER_B.write(x, y, color)
                 j+=1
 
             pixel += toByte - fromByte
@@ -394,11 +402,8 @@ class PPU:
                 v += 1
             del k
         del tiles
-        del matrix
-
 
     def drawSprites(self, scanline):
-        matrix = pygame.PixelArray(self.layerA)
         numberSpritesPerScanline = 0
         Y = scanline % 8
         secondaryOAM = array('B', [0xFF] * 32)
@@ -460,44 +465,17 @@ class PPU:
                 if color == self.colorPallete[self.VRAM.read(0x3F10)]:
                     color += (0,)
 
-                matrix[spriteX + j][spriteY + Y]=color
-                if self.showBackground and not(self.spriteHitOccured) and currentSprite == 0 and matrix[spriteX + j][spriteY + Y] == color:
+                self.renderer.display.LAYER_A.write(spriteX + j, spriteY + Y, color)
+                checkColor=self.renderer.display.LAYER_A.read(spriteX + j, spriteY + Y)
+                if self.showBackground and not(self.spriteHitOccured) and currentSprite == 0 and checkColor == color:
                     self.sprite0Hit = True
                     self.spriteHitOccured = True
             del sprloop
         del k
-        del matrix
-
-    def enterVBlank(self):
-        if self.NMI:
-            self.console.CPU.doNMI()
-
-        self.VBlank = True
-        c = True
-        while c == True:
-            try:
-                self.screen.blit(self.layerB, (0,0))
-                self.screen.blit(self.layerA, (0,0))
-                self.screen.blit(self.debugLayer, (0,0))
-                c = False
-            except:
-                c = True
-        pygame.display.update()
-    def exitVBlank(self):
-        self.VBlank = False
-        self.debugLayer.fill((0,0,0,0))
-        self.layerA.fill((0,0,0,0))
-        self.layerB.fill((0,0,0))
-        pygame.display.flip()
-
-    def debugMsg(self, msg):
-        self.debugLayer.fill((0,0,0,0))
-        font = pygame.font.Font(pygame.font.get_default_font(), 8)
-        self.debugLayer.blit(font.render(msg, False, (255, 255, 255, 1), (0,0,0,0)),(4,220))
 
     def run(self):
         print("PPU OK")
-        if not self.console.THREAD_MODE == "SINGLE":
+        if self.console.THREAD_MODE == "SINGLE":
             pass
         else:
             self.console.CPU=self.console.CPU
@@ -505,5 +483,5 @@ class PPU:
                 self.console.CPU.end.wait()
                 self.console.CPU.end.clear()
                 print(self.console.CPU.scanline)
-                pygame.display.update()
+                self.renderer.display.blit()
                 self.console.CPU.scanline=0
