@@ -1,9 +1,12 @@
 from romLoader import romLoader
-from cpu import cpu
+from cpu import CPU
+from ppu import PPU
+import threading
+import pygame
 import sys
 
 class Console:
-
+    
     def __init__(self):
         romPath = sys.argv[1]
 
@@ -14,7 +17,17 @@ class Console:
         except:
             print("Couldn't load NES cartridge")
 
-        CPU = cpu(self.cartridge)
-        CPU.run()
+        self.THREAD_MODE = "SINGLE"
 
-Console()
+        self.CPU = CPU(self)
+        self.PPU = PPU(self)
+
+
+    def powerOn(self):
+        self.CPU.run()
+    #     self.CPU.start()
+    #     self.PPU.start()
+
+if __name__ == '__main__':
+    console = Console()
+    console.powerOn()

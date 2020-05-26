@@ -1,17 +1,36 @@
 import pygame
-import numpy as np
+import os
+import threading
+import multiprocessing
 import time
+from array import array
 import instructions
-from ppu import ppu
 import joypad
 
-class cpu:
+class CPU:
 
-    def __init__(self, cartridge):
-        self.ppu = ppu(self, cartridge)
+    class VolatileMemory:
+    
+        def __init__(self, size):
+            self.ram = array('B', [0x00] * size)
+
+        def read(self, a=0x0):
+            return self.ram[a]
+
+        def write(self, a=0x0, v=0x0):
+            self.ram[a] = v
+
+    def __init__(self, console=None):
+        print("Initializing CPU...")
+
+        self.console = console
+        self.clock = multiprocessing.Value("I", 0)
+
+        if not self.console.THREAD_MODE == "SINGLE":
+            self.end = threading.Event()
 
         self.registers = {  'PC': 0,            #Program Counter
-                            'SP': 0xFF,            #Stack Pointer
+                            'SP': 0xFF,         #Stack Pointer
                             'A': 0,             #Accumulator
                             'X': 0,             #Register X
                             'Y': 0,             #Register Y
@@ -24,14 +43,6 @@ class cpu:
                             'b': 4,      #Break Command
                             'v': 6,      #Overflow Flag
                             'n': 7 }     #Negative Flag
-
-        self.memory = [0x00] * 0x10000
-        self.scanline = 0
-        self.cart = cartridge
-        self.initMemory()
-        self.registers['PC'] = self.dmaRAMRead(0xFFFC) | (self.dmaRAMRead(0xFFFD) << 8)
-        self.count = 0
-        self.z = 0
 
         self.instructions = {   0x00: instructions.BRK_Implied, 
                                 0x01: instructions.ORA_Indirect_X, 
@@ -269,83 +280,78 @@ class cpu:
                                 0xFF: instructions.ISB_Absolute_X
         }
 
-    def initMemory(self):
+        self.RAM = self.VolatileMemory(0x10000)
+        self.cart = self.console.cartridge
+        self.load_ram_data()
+        self.registers['PC'] = self.RAM.read(0xFFFC) | (self.RAM.read(0xFFFD) << 8)
+        self.scanline = 0
+        self.count = 0
+        self.z = 0
+
+        super(CPU, self).__init__()
+
+    def load_ram_data(self):
         if self.cart.mapperNumber != 0:
             print ("Mapper not available yet")
             exit(1)
 
         i=0
-        maxdata = len(self.cart.prgRomData)
+        maxdata = self.cart.prgRomData.__len__()
         while i < maxdata:
             v = self.cart.prgRomData[i]
-            self.dmaRAMWrite(i + 0x8000, v)
+            self.RAM.write(i + 0x8000, v)
             if self.cart.prgRomCount == 1:
-                self.dmaRAMWrite(i + 0xC000, v)
+                self.RAM.write(i + 0xC000, v)
             i+=1
+        del self.cart.prgRomData
         i=0
         while i < 0x20:
-            self.dmaRAMWrite(i + 0x4000, 0xFF)
+            self.RAM.write(i + 0x4000, 0xFF)
             i+=1
 
     def doNMI(self):
         self.pushStack((self.registers['PC'] >> 8) & 0xFF)
         self.pushStack(self.registers['PC'] & 0xFF)
         self.pushStack(self.registers['P'])
-        self.registers['PC'] = self.dmaRAMRead(0xFFFA) | (self.dmaRAMRead(0xFFFB) << 8)
+        self.registers['PC'] = self.RAM.read(0xFFFA) | (self.RAM.read(0xFFFB) << 8)
         self.z = 1
-
-    def dmaRAMWrite(self, address, value):
-        self.memory[address] = value
-        # current = self.memory.tell()
-        # self.memory.seek(address, 0)
-        # self.memory.write(value.to_bytes(0x1, 'little'))
-        # self.memory.seek(current, 0)
-
-    def dmaRAMRead(self, address):
-        value = self.memory[address]
-        # current = self.memory.tell()
-        # self.memory.seek(address, 0)
-        # value = int.from_bytes(self.memory.read(0x1), 'little')
-        # self.memory.seek(current)
-        return value
-
 
     def writeMemory(self, address, value):
         if address < 0x2000:
             address &= 0x7FF
-            self.dmaRAMWrite(address, value)
+            self.RAM.write(address, value)
         elif 0x2000 <= address < 0x4000:
             # PPU Registers
-            address &= 0x2007
-            if address == 0x2000:
-                self.ppu.processControlReg1(value)
-            elif address == 0x2001:
-                self.ppu.processControlReg2(value)
-            elif address == 0x2003:
-                self.ppu.spriteRamAddr = value
-            elif address == 0x2004:
-                self.ppu.writeSprRam(value)
-            elif address == 0x2005:
-                self.ppu.processPPUSCROLL(value)
-            elif address == 0x2006:
-                self.ppu.processPPUADDR(value)
-            elif address == 0x2007:
-                self.ppu.writeVRAM(value)
-            self.dmaRAMWrite(address, value)
+            addrflag = (address-0x2000)&0xF
+            if addrflag == 0:
+                self.console.PPU.processControlReg1(value)
+            elif addrflag == 1:
+                self.console.PPU.processControlReg2(value)
+            elif addrflag == 3:
+                self.console.PPU.spriteRamAddr = value
+            elif addrflag == 4:
+                self.console.PPU.writeSprRam(value)
+            elif addrflag == 5:
+                self.console.PPU.processPPUSCROLL(value)
+            elif addrflag == 6:
+                self.console.PPU.processPPUADDR(value)
+            elif addrflag == 7:
+                self.console.PPU.writeVRAM(value)
+            self.RAM.write(address, value)
         elif 0x4000 <= address < 0x4014 or address == 0x4015:
             pass # SPU not implemented yet
         elif address == 0x4014:
-            self.ppu.writeSprRamDMA(value)
-            self.dmaRAMWrite(address, value)
+            self.console.PPU.writeSprRamDMA(value)
+            self.RAM.write(address, value)
         elif address == 0x4016 or address == 0x4017:
             if joypad.LastWrote___ == 1 and value == 0:
                 joypad.ReadNumber__ = 0
             joypad.LastWrote___ = value
-            self.dmaRAMWrite(address, value)
+            self.RAM.write(address, value)
         elif 0x6000 <= address < 0x8000:
             pass # SRAM not implemented yet
         elif 0x8000 <= address < 0x10000:
-            self.dmaRAMWrite(address, value)
+            self.RAM.write(address, value)
         else:
             raise Exception('Unhandled RAM write access')
 
@@ -353,23 +359,23 @@ class cpu:
         value = 0x00
         if address < 0x2000:
             address &= 0x7FF
-            value = self.dmaRAMRead(address)
+            value = self.RAM.read(address)
         elif 0x2000 <= address < 0x4000:
             addrflag = (address-0x2000)&0xF
             if addrflag == 2:
-                value = self.ppu.readStatusFlag()
+                value = self.console.PPU.readStatusFlag()
             elif addrflag == 7:
-                value = self.ppu.readVRAM()
-            self.dmaRAMWrite(address, value)
+                value = self.console.PPU.readVRAM()
+            self.RAM.write(address, value)
         elif address == 0x4016:
             joypad.Strobe()
             value = joypad.KeysBuffer__
         elif 0x4000 < address < 0x4020:
-            value = self.dmaRAMRead(address)
+            value = self.RAM.read(address)
         elif 0x6000 <= address < 0x8000:
             pass # SRAM not implemented yet
         elif 0x8000 <= address < 0x10000:
-            value = self.dmaRAMRead(address)
+            value = self.RAM.read(address)
         else:
             raise Exception('Unhandled RAM read access')
 
@@ -397,41 +403,43 @@ class cpu:
         return value
 
     def run(self):
-        cyclesClock = 0
+        print("CPU OK")
         a = 0
         loopCounter = 0
         fpsCounter = 0
         cyclesCounter = 0
         timer = time.perf_counter()
         self.z = 0
-        while 1:
+        while True:
             pygame.event.poll()
 
             # Executa a instrucao e armazena
-            instr = self.dmaRAMRead(self.registers['PC'])
+            instr = self.RAM.read(self.registers['PC'])
             cycles = self.instructions[instr](self)
 
-            cyclesClock += cycles
+            self.clock.value += cycles
             if (time.perf_counter() - timer) > 1:
                 fpsCounter = int(loopCounter/100)
                 timer = time.perf_counter()
                 loopCounter = 0
-            cyclesCounter = cyclesClock
+            cyclesCounter = self.clock.value
 
-            if cyclesClock >= 113:
-                cyclesClock = 0
-                if 0 <= self.scanline < 240:
-                    if self.ppu.VBlank:
-                        self.ppu.exitVBlank()
-                    self.ppu.doScanline()
-                elif self.scanline == 241:
-                    self.ppu.debugMsg("Cycles {0} | FPS: {1}".format(cyclesCounter, fpsCounter))
+            if self.clock.value >= 113:
+                joypad.keys = pygame.key.get_pressed()
+                if joypad.keys[pygame.K_ESCAPE] == 1:
+                    exit()
+                self.clock.value = 0
+                if self.console.PPU.VBlank:
+                    self.console.PPU.exitVBlank()
+                    if not self.console.THREAD_MODE == "SINGLE":
+                        self.end.set()
+                if 0 <= self.scanline < 240 and not self.console.PPU.VBlank:
+                    self.console.PPU.doScanline(self.scanline)                
+                elif self.scanline == 240 and not self.console.PPU.VBlank:
+                    self.console.PPU.debugMsg("Cycles {0} | FPS: {1}".format(cyclesCounter, fpsCounter))
                     cyclesCounter = 0
-                    self.ppu.enterVBlank()
-                    joypad.keys = pygame.key.get_pressed()
-                    if joypad.keys[pygame.K_ESCAPE] == 1:
-                        exit()
-                elif self.scanline == 261:
+                    self.console.PPU.enterVBlank()
+                elif self.scanline == 254:
                     self.scanline = -1
                 self.scanline += 1
                 loopCounter+=1

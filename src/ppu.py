@@ -1,12 +1,25 @@
 import pygame
-import numpy as np
-class ppu:
+import threading
+import multiprocessing
+import time
+from array import array
 
-    def __init__(self, cpu, cartridge):
-        self.cpu = cpu
+class PPU:
 
-        self.VRAM = [np.uint8(0x00)] * 0x10000
-        self.SPRRAM = [np.uint8(0x00)] * 0x100
+    class VolatileMemory:
+
+        def __init__(self, size):
+            self.ram = array('B', [0x00] * size)
+
+        def read(self, a=0x0):
+            return self.ram[a]
+
+        def write(self, a=0x0, v=0x0):
+            self.ram[a] = v
+
+    def __init__(self, console=None):
+        print("Initializing PPU...")
+        self.console = console
 
         self.nameTableAddress = 0
         self.incrementAddress = 1
@@ -36,12 +49,6 @@ class ppu:
 
         self.ppuMirroring = 0
         self.addressMirroring = 0
-
-        self.matrix = []
-
-        self.cart = cartridge
-        self.initMemory()
-        self.setMirroring(self.cart.mirror)
 
         self.colorPallete = [(0x75, 0x75, 0x75),
                              (0x27, 0x1B, 0x8F),
@@ -108,17 +115,25 @@ class ppu:
                              (0x00, 0x00, 0x00),
                              (0x00, 0x00, 0x00)]
 
-    def initMemory(self):
-        #for k,v in enumerate(self.cart.chrRomData):
-        maxdata = len(self.cart.chrRomData)
+        self.VRAM = self.VolatileMemory(0x10000)
+        self.SPRRAM = self.VolatileMemory(0x100)
+
+        self.load_vram_data()
+        self.setMirroring(self.console.cartridge.mirror)
+        
+        super(PPU, self).__init__()
+
+    def load_vram_data(self):
+        #for k,v in enumerate(self.console.cartridge.chrRomData):
+        maxdata = self.console.cartridge.chrRomData.__len__()
         k = 0
         while k < maxdata:
-            v=self.cart.chrRomData[k]
-            self.dmaVRAMWrite(k, v)
+            v=self.console.cartridge.chrRomData[k]
+            self.VRAM.write(k, v)
             k+=1
-        pygame.init()
 
         try:
+            pygame.init()
             self.screen = pygame.display.set_mode((256, 240))
             self.layerB = pygame.Surface((256,240))
             self.layerA = pygame.Surface((256,240), pygame.SRCALPHA)
@@ -132,21 +147,6 @@ class ppu:
             pygame.display.flip()
         except:
             print ("Initialize Video Error")
-
-    def dmaVRAMWrite(self, address, value):
-        self.VRAM[address] = value
-
-    def dmaVRAMRead(self, address):
-        value = self.VRAM[address]
-        return value
-
-
-    def dmaSPRRAMWrite(self, address, value):
-        self.SPRRAM[address] = value
-
-    def dmaSPRRAMRead(self, address):
-        value = self.SPRRAM[address]
-        return value
 
     def setMirroring(self, mirroring):
         # 0 = horizontal mirroring
@@ -254,21 +254,21 @@ class ppu:
         #Todo: Verificar se esta certo
         # NameTable write mirroring.
         if self.VRAMAddress >= 0x2000 and self.VRAMAddress < 0x3F00:
-            self.dmaVRAMWrite(self.VRAMAddress + self.addressMirroring, value)
-            self.dmaVRAMWrite(self.VRAMAddress, value)
+            self.VRAM.write(self.VRAMAddress + self.addressMirroring, value)
+            self.VRAM.write(self.VRAMAddress, value)
         # Color Pallete write mirroring.
         elif self.VRAMAddress >= 0x3F00 and self.VRAMAddress < 0x3F20:
             if self.VRAMAddress == 0x3F00 or self.VRAMAddress == 0x3F10:
-                self.dmaVRAMWrite(0x3F00, value)
-                self.dmaVRAMWrite(0x3F04, value)
-                self.dmaVRAMWrite(0x3F08, value)
-                self.dmaVRAMWrite(0x3F0C, value)
-                self.dmaVRAMWrite(0x3F10, value)
-                self.dmaVRAMWrite(0x3F14, value)
-                self.dmaVRAMWrite(0x3F18, value)
-                self.dmaVRAMWrite(0x3F1C, value)
+                self.VRAM.write(0x3F00, value)
+                self.VRAM.write(0x3F04, value)
+                self.VRAM.write(0x3F08, value)
+                self.VRAM.write(0x3F0C, value)
+                self.VRAM.write(0x3F10, value)
+                self.VRAM.write(0x3F14, value)
+                self.VRAM.write(0x3F18, value)
+                self.VRAM.write(0x3F1C, value)
             else:
-                self.dmaVRAMWrite(self.VRAMAddress, value)
+                self.VRAM.write(self.VRAMAddress, value)
 
         self.VRAMAddress += self.incrementAddress
 
@@ -278,17 +278,17 @@ class ppu:
         address = self.VRAMAddress & 0x3FFF
         if address >= 0x3F00 and address < 0x4000:
             address = 0x3F00 + (address & 0xF)
-            self.VRAMBuffer = self.dmaVRAMRead(address)
-            value = self.dmaVRAMRead(address)
+            self.VRAMBuffer = self.VRAM.read(address)
+            value = self.VRAM.read(address)
         elif address < 0x3F00:
             value = self.VRAMBuffer
-            self.VRAMBuffer = self.dmaVRAMRead(address)
+            self.VRAMBuffer = self.VRAM.read(address)
         self.VRAMAddress += self.incrementAddress
 
         return value
 
     def writeSprRam(self, value):
-        self.dmaSPRRAMWrite(self.spriteRamAddr,value)
+        self.SPRRAM.write(self.spriteRamAddr,value)
         self.spriteRamAddr = (self.spriteRamAddr + 1) & 0xFF
 
     def writeSprRamDMA(self, value):
@@ -296,7 +296,7 @@ class ppu:
 
         i=0
         while i < 256:
-            self.dmaSPRRAMWrite(i, self.cpu.dmaRAMRead(address))
+            self.SPRRAM.write(i, self.console.CPU.RAM.read(address))
             address += 1
             i+=1
 
@@ -312,19 +312,19 @@ class ppu:
 
         return value
 
-    def doScanline(self):
+    def doScanline(self, scanline):
 
         if self.showBackground:
-            self.drawBackground()
+            self.drawBackground(scanline)
 
         if self.showSprites:
-            self.drawSprites()
+            self.drawSprites(scanline)
             
 
-    def drawBackground(self):
+    def drawBackground(self, scanline):
         matrix = pygame.PixelArray(self.layerB)
-        tileY = int(self.cpu.scanline / 8)
-        Y = int(self.cpu.scanline % 8)
+        tileY = int(scanline / 8)
+        Y = int(scanline % 8)
 
         maxTiles = 32
         if (self.ppuScrollX % 8) != 0:
@@ -334,8 +334,9 @@ class ppu:
         v = int(self.nameTableAddress + currentTile)
         pixel = 0
 
-        i=0 if self.clippingBackground else 1
-        while i < maxTiles:
+        first=0 if self.clippingBackground else 1
+        tiles=array('B', list(range(first, maxTiles)))
+        for i in tiles:
 
             fromByte = 0
             toByte = 8
@@ -347,15 +348,15 @@ class ppu:
                 if i == (maxTiles - 1):
                     fromByte = 8 - (ppuScrollFlag)
 
-            ptrAddress = self.dmaVRAMRead(v + int(tileY*0x20))
-            pattern1 = self.dmaVRAMRead(self.backgroundPatternTable + (ptrAddress*16) + Y)
-            pattern2 = self.dmaVRAMRead(self.backgroundPatternTable + (ptrAddress*16) + Y + 8)
+            ptrAddress = self.VRAM.read(v + int(tileY*0x20))
+            pattern1 = self.VRAM.read(self.backgroundPatternTable + (ptrAddress*16) + Y)
+            pattern2 = self.VRAM.read(self.backgroundPatternTable + (ptrAddress*16) + Y + 8)
             # blockX e blockY sao as coordenadas em relacao ao block
             blockX = i % 4
             blockY = tileY % 4
             block = int(i / 4) + (int(tileY / 4) * 8)
             addressByte = int((v & ~0x001F) + 0x03C0 + block)
-            byteAttributeTable = self.dmaVRAMRead(addressByte)
+            byteAttributeTable = self.VRAM.read(addressByte)
             colorIndex = 0x3F00
 
             if blockX < 2:
@@ -368,16 +369,16 @@ class ppu:
             else:
                 colorIndex |= ((byteAttributeTable & 0b11000000) >> 6) << 2
 
-            j=fromByte
-            while j < toByte:
+            k=array('B', list(range(fromByte, toByte)))
+            for j in k:
                 bit1 = ((1 << j) & pattern1) >> j
                 bit2 = ((1 << j) & pattern2) >> j
                 colorIndexFinal = colorIndex
                 colorIndexFinal |= ((bit2 << 1) | bit1)
 
-                color = self.colorPallete[self.dmaVRAMRead(colorIndexFinal)]
+                color = self.colorPallete[self.VRAM.read(colorIndexFinal)]
                 x = (pixel + ((j * (-1)) + (toByte - fromByte) - 1))
-                y = self.cpu.scanline
+                y = scanline
 
                 if (color != matrix[x][y]):
                     matrix[x][y] = color
@@ -391,30 +392,36 @@ class ppu:
                 v ^= 0x400
             else:
                 v += 1
-            
-            i+=1
+            del k
+        del tiles
         del matrix
 
 
-    def drawSprites(self):
+    def drawSprites(self, scanline):
+        matrix = pygame.PixelArray(self.layerA)
         numberSpritesPerScanline = 0
-        Y = self.cpu.scanline % 8
-        secondaryOAM = [0xFF] * 32
+        Y = scanline % 8
+        secondaryOAM = array('B', [0xFF] * 32)
         indexSecondaryOAM = 0
 
-        for currentSprite in range(0, 256, 4):
-            spriteY = self.dmaSPRRAMRead(currentSprite)
+        k = array('B', list(range(0, 256, 4)))
+        for currentSprite in k:
+            spriteY = self.SPRRAM.read(currentSprite)
 
             if numberSpritesPerScanline == 8:
                 break
 
-            if spriteY <= self.cpu.scanline < spriteY + self.spriteSize:
-                for i in range(4):
-                    secondaryOAM[indexSecondaryOAM + i] = self.dmaSPRRAMRead(currentSprite+i)
+            if spriteY <= scanline < spriteY + self.spriteSize:
+                sprloop=array('B', list(range(4)))
+                for i in sprloop:
+                    secondaryOAM[indexSecondaryOAM + i] = self.SPRRAM.read(currentSprite+i)
                 indexSecondaryOAM += 4
                 numberSpritesPerScanline += 1
+                del sprloop
+        del k
 
-        for currentSprite in range(28, -1, -4):
+        k = array('B', list(range(28, -1, -4)))
+        for currentSprite in k:
             spriteX = secondaryOAM[currentSprite + 3]
             spriteY = secondaryOAM[currentSprite]
 
@@ -425,18 +432,18 @@ class ppu:
             flipVertical = secondaryOAM[currentSpriteAddress] & 0x80
             flipHorizontal = secondaryOAM[currentSpriteAddress] & 0x40
 
-            Y = self.cpu.scanline - spriteY
+            Y = scanline - spriteY
 
             ptrAddress = secondaryOAM[currentSprite + 1]
             patAddress = self.spritePatternTable + (ptrAddress * 16) + ((7 - Y) if flipVertical else Y)
-            pattern1 = self.dmaVRAMRead(patAddress)
-            pattern2 = self.dmaVRAMRead(patAddress + 8)
+            pattern1 = self.VRAM.read(patAddress)
+            pattern2 = self.VRAM.read(patAddress + 8)
             colorIndex = 0x3F10
 
             colorIndex |= ((secondaryOAM[currentSprite +2] & 0x3) << 2)
 
-            j=0
-            while j < 8:
+            sprloop = array('B', range(8))
+            for j in sprloop:
                 if flipHorizontal:
                     colorIndexFinal = (pattern1 >> j) & 0x1
                     colorIndexFinal |= ((pattern2 >> j) & 0x1 ) << 1
@@ -447,28 +454,35 @@ class ppu:
                 colorIndexFinal += colorIndex
                 if (colorIndexFinal % 4) == 0:
                     colorIndexFinal = 0x3F00
-                color = self.colorPallete[(self.dmaVRAMRead(colorIndexFinal) & 0x3F)]
+                color = self.colorPallete[(self.VRAM.read(colorIndexFinal) & 0x3F)]
 
                 # Add Transparency
-                if color == self.colorPallete[self.dmaVRAMRead(0x3F10)]:
+                if color == self.colorPallete[self.VRAM.read(0x3F10)]:
                     color += (0,)
 
-                pygame.Surface.set_at(self.layerA, (spriteX + j, spriteY + Y), color)
-
-                if self.showBackground and not(self.spriteHitOccured) and currentSprite == 0 and pygame.Surface.get_at(self.layerA, (spriteX + j, spriteY + Y)) == color:
+                matrix[spriteX + j][spriteY + Y]=color
+                if self.showBackground and not(self.spriteHitOccured) and currentSprite == 0 and matrix[spriteX + j][spriteY + Y] == color:
                     self.sprite0Hit = True
                     self.spriteHitOccured = True
-                j+=1
+            del sprloop
+        del k
+        del matrix
 
     def enterVBlank(self):
         if self.NMI:
-            self.cpu.doNMI()
+            self.console.CPU.doNMI()
 
         self.VBlank = True
-        self.screen.blit(self.layerB, (0,0))
-        self.screen.blit(self.layerA, (0,0))
-        self.screen.blit(self.debugLayer, (0,0))
-        pygame.display.flip()
+        c = True
+        while c == True:
+            try:
+                self.screen.blit(self.layerB, (0,0))
+                self.screen.blit(self.layerA, (0,0))
+                self.screen.blit(self.debugLayer, (0,0))
+                c = False
+            except:
+                c = True
+        pygame.display.update()
     def exitVBlank(self):
         self.VBlank = False
         self.debugLayer.fill((0,0,0,0))
@@ -480,3 +494,16 @@ class ppu:
         self.debugLayer.fill((0,0,0,0))
         font = pygame.font.Font(pygame.font.get_default_font(), 8)
         self.debugLayer.blit(font.render(msg, False, (255, 255, 255, 1), (0,0,0,0)),(4,220))
+
+    def run(self):
+        print("PPU OK")
+        if not self.console.THREAD_MODE == "SINGLE":
+            pass
+        else:
+            self.console.CPU=self.console.CPU
+            while True:
+                self.console.CPU.end.wait()
+                self.console.CPU.end.clear()
+                print(self.console.CPU.scanline)
+                pygame.display.update()
+                self.console.CPU.scanline=0

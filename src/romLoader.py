@@ -1,3 +1,4 @@
+from array import array
 class romLoader:
     rom = 0
 
@@ -41,8 +42,8 @@ class romLoader:
         self.mirror = self.flags6 & 1
 
         # Le o PRG ROM e o CHR ROM e os mapeia em arrays de inteiros
-        self.prgRomData = list(self.rom.read(0x4000 * self.prgRomCount))
-        self.chrRomData = list(self.rom.read(0x2000 * self.chrRomCount))
+        self.prgRomData = array('B', self.rom.read(0x4000 * self.prgRomCount))
+        self.chrRomData = array('B', self.rom.read(0x2000 * self.chrRomCount))
 
     def printHeader(self):
 
