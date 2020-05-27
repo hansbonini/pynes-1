@@ -1,4 +1,4 @@
-from romLoader import romLoader
+from cartridge import romLoader
 from cpu import CPU
 from ppu import PPU
 import threading
@@ -23,10 +23,10 @@ class Console:
             self.CPU = CPU(self)
         except:
             raise Exception("Couldn't initialize CPU") 
-        try:      
-            self.PPU = PPU(self)
-        except:
-            raise Exception("Couldn't initialize PPU")      
+        #try:      
+        self.PPU = PPU(self)
+        #except:
+        #    raise Exception("Couldn't initialize PPU")      
 
     def powerOn(self):
         if self.THREAD_MODE == "SINGLE":

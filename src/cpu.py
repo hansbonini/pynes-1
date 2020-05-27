@@ -418,6 +418,7 @@ class CPU:
         timer = time.perf_counter()
         self.z = 0
         while True:
+            
             pygame.event.poll()
 
             # Interrupts

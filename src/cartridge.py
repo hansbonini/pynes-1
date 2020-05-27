@@ -44,6 +44,7 @@ class romLoader:
         # Le o PRG ROM e o CHR ROM e os mapeia em arrays de inteiros
         self.prgRomData = array('B', self.rom.read(0x4000 * self.prgRomCount))
         self.chrRomData = array('B', self.rom.read(0x2000 * self.chrRomCount))
+        self.rom.close()
 
     def printHeader(self):
 
