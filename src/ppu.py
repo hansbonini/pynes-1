@@ -152,9 +152,9 @@ class PPU:
         maxdata = self.console.cartridge.chrRomData.__len__()
         k = 0
         while k < maxdata:
-            v=self.console.cartridge.chrRomData[k]
+            v = self.console.cartridge.chrRomData[k]
             self.VRAM.write(k, v)
-            k+=1
+            k += 1
         self.renderer.display.reset()
 
     def setMirroring(self, mirroring):
@@ -303,11 +303,11 @@ class PPU:
     def writeSprRamDMA(self, value):
         address = value * 0x100
 
-        i=0
+        i = 0
         while i < 256:
             self.SPRRAM.write(i, self.console.CPU.RAM.read(address))
             address += 1
-            i+=1
+            i += 1
 
     def readStatusFlag(self):
         value = 0
@@ -342,8 +342,8 @@ class PPU:
         v = int(self.nameTableAddress + currentTile)
         pixel = 0
 
-        first=0 if self.clippingBackground else 1
-        tiles=array('B', list(range(first, maxTiles)))
+        first = 0 if self.clippingBackground else 1
+        tiles = array('B', list(range(first, maxTiles)))
         for i in tiles:
 
             fromByte = 0
@@ -377,7 +377,7 @@ class PPU:
             else:
                 colorIndex |= ((byteAttributeTable & 0b11000000) >> 6) << 2
 
-            k=array('B', list(range(fromByte, toByte)))
+            k = array('B', list(range(fromByte, toByte)))
             for j in k:
                 bit1 = ((1 << j) & pattern1) >> j
                 bit2 = ((1 << j) & pattern2) >> j
@@ -390,7 +390,7 @@ class PPU:
 
                 if (bytes(color) != self.renderer.display.LAYER_B.read(x, y)):
                     self.renderer.display.LAYER_B.write(x, y, color)
-                j+=1
+                j += 1
 
             pixel += toByte - fromByte
 
@@ -417,7 +417,7 @@ class PPU:
                 break
 
             if spriteY <= scanline < spriteY + self.spriteSize:
-                sprloop=array('B', list(range(4)))
+                sprloop = array('B', list(range(4)))
                 for i in sprloop:
                     secondaryOAM[indexSecondaryOAM + i] = self.SPRRAM.read(currentSprite+i)
                 indexSecondaryOAM += 4
@@ -478,10 +478,10 @@ class PPU:
         if self.console.THREAD_MODE == "SINGLE":
             pass
         else:
-            self.console.CPU=self.console.CPU
+            self.console.CPU = self.console.CPU
             while True:
                 self.console.CPU.end.wait()
                 self.console.CPU.end.clear()
                 print(self.console.CPU.scanline)
                 self.renderer.display.blit()
-                self.console.CPU.scanline=0
+                self.console.CPU.scanline = 0
