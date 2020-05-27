@@ -47,6 +47,7 @@ class romLoader:
         # Read PRG ROM and CHR ROM and map it to integer arrays
         self.prgRomData = array('B', self.rom.read(0x4000 * self.prgRomCount))
         self.chrRomData = array('B', self.rom.read(0x2000 * self.chrRomCount))
+        self.rom.close()
 
     def printHeader(self):
         print("Mapper Number: {0}".format(self.mapperNumber))

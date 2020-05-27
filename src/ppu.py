@@ -388,7 +388,7 @@ class PPU:
                 x = (pixel + ((j * (-1)) + (toByte - fromByte) - 1))
                 y = scanline
 
-                if (color != self.renderer.display.LAYER_B.read(x, y)):
+                if (bytes(color) != self.renderer.display.LAYER_B.read(x, y)):
                     self.renderer.display.LAYER_B.write(x, y, color)
                 j += 1
 
@@ -466,8 +466,8 @@ class PPU:
                     color += (0,)
 
                 self.renderer.display.LAYER_A.write(spriteX + j, spriteY + Y, color)
-                checkColor = self.renderer.display.LAYER_A.read(spriteX + j, spriteY + Y)
-                if self.showBackground and not self.spriteHitOccured and currentSprite == 0 and checkColor == color:
+                checkColor=self.renderer.display.LAYER_A.read(spriteX + j, spriteY + Y)
+                if self.showBackground and not(self.spriteHitOccured) and currentSprite == 0 and checkColor == bytes(color):
                     self.sprite0Hit = True
                     self.spriteHitOccured = True
             del sprloop

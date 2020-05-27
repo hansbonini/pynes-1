@@ -1,12 +1,18 @@
 import pygame
+from pygame import gfxdraw
 
 class PygameRenderer:
     class NormalLayer:
         def __init__(self):
             self.layer = pygame.Surface((256,240))
-            
+            matrix = pygame.PixelArray(self.layer)
+            matrix[:] = (255, 0, 0)
+            del matrix            
+
         def clear(self):
-            self.layer.fill((0, 0, 0))
+            matrix = pygame.PixelArray(self.layer)
+            matrix[:] = (0, 0, 0)
+            del matrix
 
         def blit(self, element=None, position=(0,0), color=(0,0,0)):
             self.layer.blit(element, position, color)
@@ -18,16 +24,19 @@ class PygameRenderer:
             return value
 
         def write(self, x, y, value):
-            matrix = pygame.PixelArray(self.layer)
-            matrix[x,y] = value
-            del matrix
+            gfxdraw.pixel(self.layer, x, y, value)
 
     class AlphaLayer:
         def __init__(self):
-            self.layer = pygame.Surface((256,240), pygame.SRCALPHA)
-            
+            self.layer = pygame.Surface((256,240), pygame.SRCALPHA) 
+            matrix = pygame.PixelArray(self.layer)
+            matrix[:] = (255, 0, 0, 0)
+            del matrix            
+
         def clear(self):
-            self.layer.fill((0, 0, 0, 0))
+            matrix = pygame.PixelArray(self.layer)
+            matrix[:] = (0, 0, 0, 0)
+            del matrix
 
         def blit(self, element=None, position=(0,0), color=(0,0,0,0)):
             self.layer.blit(element, position, color)
@@ -44,22 +53,20 @@ class PygameRenderer:
             return value
 
         def write(self, x, y, value):
-            matrix = pygame.PixelArray(self.layer)
-            matrix[x,y] = value
-            del matrix
+            gfxdraw.pixel(self.layer, x, y, value)
 
     def __init__(self):
         self.layers = ["LAYER_B", "LAYER_A", "DEBUG_LAYER"]
 
-        try:
-            pygame.init()   
-            self.SCREEN = pygame.display.set_mode((256, 240))
-            self.LAYER_B = PygameRenderer.NormalLayer()
-            self.LAYER_A = PygameRenderer.AlphaLayer()
-            self.DEBUG_LAYER = PygameRenderer.AlphaLayer()
-            self.reset()
-        except:
-           print ("Initialize Video Error with Pygame as Renderer")
+        #try:
+        pygame.init()   
+        self.SCREEN = pygame.display.set_mode((256, 240))
+        self.LAYER_B = PygameRenderer.NormalLayer()
+        self.LAYER_A = PygameRenderer.AlphaLayer()
+        self.DEBUG_LAYER = PygameRenderer.AlphaLayer()
+        self.reset()
+        #except:
+        #   print ("Initialize Video Error with Pygame as Renderer")
         super(PygameRenderer, self).__init__()
 
     def reset(self):
@@ -74,7 +81,6 @@ class PygameRenderer:
             l.clear()
             del l
             i+=1
-        pygame.display.flip()
 
     def blit(self):
         tl = self.layers.__len__()
