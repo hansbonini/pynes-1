@@ -5,8 +5,8 @@ import threading
 import pygame
 import sys
 
+
 class Console:
-    
     def __init__(self):
         romPath = sys.argv[1]
 
@@ -35,6 +35,7 @@ class Console:
         else:
             self.CPU.start()
             self.PPU.start()
+
 
 if __name__ == '__main__':
     console = Console()

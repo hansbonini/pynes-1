@@ -7,8 +7,8 @@ from array import array
 import instructions
 import joypad
 
-class CPU:
 
+class CPU:
     class VolatileMemory:  
         def __init__(self, size):
             self.ram = array('B', [0x00] * size)
@@ -281,7 +281,7 @@ class CPU:
 
         self.RAM = self.VolatileMemory(0x10000)
         self.InterruptRequest = multiprocessing.Value("c")
-        self.InterruptRequest = 0x52 # R
+        self.InterruptRequest = 0x52  # R
         self.cart = self.console.cartridge
         self.load_ram_data()
         self.scanline = 0
@@ -292,22 +292,22 @@ class CPU:
 
     def load_ram_data(self):
         if self.cart.mapperNumber != 0:
-            print ("Mapper not available yet")
+            print("Mapper not available yet")
             exit(1)
 
-        i=0
+        i = 0
         maxdata = self.cart.prgRomData.__len__()
         while i < maxdata:
             v = self.cart.prgRomData[i]
             self.RAM.write(i + 0x8000, v)
             if self.cart.prgRomCount == 1:
                 self.RAM.write(i + 0xC000, v)
-            i+=1
+            i += 1
         del self.cart.prgRomData
-        i=0
+        i = 0
         while i < 0x20:
             self.RAM.write(i + 0x4000, 0xFF)
-            i+=1
+            i += 1
 
     def doInterruptRequest(self):
         self.pushStack((self.registers['PC'] >> 8) & 0xFF)
@@ -346,7 +346,7 @@ class CPU:
                 self.console.PPU.writeVRAM(value)
             self.RAM.write(address, value)
         elif 0x4000 <= address < 0x4014 or address == 0x4015:
-            pass # SPU not implemented yet
+            pass  # SPU not implemented yet
         elif address == 0x4014:
             self.console.PPU.writeSprRamDMA(value)
             self.RAM.write(address, value)
@@ -356,7 +356,7 @@ class CPU:
             joypad.LastWrote___ = value
             self.RAM.write(address, value)
         elif 0x6000 <= address < 0x8000:
-            pass # SRAM not implemented yet
+            pass  # SRAM not implemented yet
         elif 0x8000 <= address < 0x10000:
             self.RAM.write(address, value)
         else:
@@ -454,4 +454,4 @@ class CPU:
                 elif self.scanline == 254:
                     self.scanline = -1
                 self.scanline += 1
-                loopCounter+=1
+                loopCounter += 1
