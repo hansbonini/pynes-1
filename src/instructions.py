@@ -15,7 +15,7 @@ def advancePC(cpu, size):
 
 
 def setN(cpu, value):
-    if value & (1<<7) == 1 << 7:
+    if value & (1 << 7) == 1 << 7:
         cpu.setStatus(cpu.statusFlags['n'], 1)
     else:
         cpu.setStatus(cpu.statusFlags['n'], 0)
