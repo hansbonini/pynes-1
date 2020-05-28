@@ -1,4 +1,4 @@
-import addressingMode
+import addrmodes
 
 
 # TODO: Verificar se nao existem enderecamentos maiores que 1 byte
@@ -58,7 +58,7 @@ def ADC_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
@@ -77,7 +77,7 @@ def ADC_Zero_X(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
@@ -96,7 +96,7 @@ def ADC_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
@@ -115,7 +115,7 @@ def ADC_Absolute_X(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
@@ -134,7 +134,7 @@ def ADC_Absolute_Y(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
@@ -153,7 +153,7 @@ def ADC_Indirect_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
@@ -172,7 +172,7 @@ def ADC_Indirect_Y(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
@@ -203,7 +203,7 @@ def AND_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] &= value
     advancePC(cpu, size)
@@ -216,7 +216,7 @@ def AND_Zero_X(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] &= value
     advancePC(cpu, size)
@@ -229,7 +229,7 @@ def AND_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] &= value
     advancePC(cpu, size)
@@ -242,7 +242,7 @@ def AND_Absolute_X(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] &= value
     advancePC(cpu, size)
@@ -255,7 +255,7 @@ def AND_Absolute_Y(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] &= value
     advancePC(cpu, size)
@@ -268,7 +268,7 @@ def AND_Indirect_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] &= value
     advancePC(cpu, size)
@@ -281,7 +281,7 @@ def AND_Indirect_Y(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] &= value
     advancePC(cpu, size)
@@ -309,7 +309,7 @@ def ASL_Zero(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x80)
     value <<= 1
@@ -325,7 +325,7 @@ def ASL_Zero_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x80)
     value <<= 1
@@ -341,7 +341,7 @@ def ASL_Absolute(cpu):
     size = 3
     nCycles = 6
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x80)
     value <<= 1
@@ -357,7 +357,7 @@ def ASL_Absolute_X(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x80)
     value <<= 1
@@ -424,7 +424,7 @@ def BIT_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     advancePC(cpu, size)
     setN(cpu, value)
@@ -437,7 +437,7 @@ def BIT_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     advancePC(cpu, size)
     setN(cpu, value)
@@ -599,7 +599,7 @@ def CMP_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     value = cpu.registers['A'] - value
     advancePC(cpu, size)
@@ -613,7 +613,7 @@ def CMP_Zero_X(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     value = cpu.registers['A'] - value
     advancePC(cpu, size)
@@ -627,7 +627,7 @@ def CMP_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     value = cpu.registers['A'] - value
     advancePC(cpu, size)
@@ -641,7 +641,7 @@ def CMP_Absolute_X(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     value = cpu.registers['A'] - value
     advancePC(cpu, size)
@@ -655,7 +655,7 @@ def CMP_Absolute_Y(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     value = cpu.registers['A'] - value
     advancePC(cpu, size)
@@ -669,7 +669,7 @@ def CMP_Indirect_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     value = cpu.registers['A'] - value
     advancePC(cpu, size)
@@ -683,7 +683,7 @@ def CMP_Indirect_Y(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     value = cpu.registers['A'] - value
     advancePC(cpu, size)
@@ -710,7 +710,7 @@ def CPX_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     value = cpu.registers['X'] - value
     advancePC(cpu, size)
@@ -724,7 +724,7 @@ def CPX_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     value = cpu.registers['X'] - value
     advancePC(cpu, size)
@@ -751,7 +751,7 @@ def CPY_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     value = cpu.registers['Y'] - value
     advancePC(cpu, size)
@@ -765,7 +765,7 @@ def CPY_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     value = cpu.registers['Y'] - value
     advancePC(cpu, size)
@@ -779,7 +779,7 @@ def DEC_Zero(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     value = (value - 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -793,7 +793,7 @@ def DEC_Zero_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     value = (value - 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -807,7 +807,7 @@ def DEC_Absolute(cpu):
     size = 3
     nCycles = 6
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     value = (value - 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -821,7 +821,7 @@ def DEC_Absolute_X(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     value = (value - 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -874,7 +874,7 @@ def EOR_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     value ^= cpu.registers['A']
     cpu.registers['A'] = value
@@ -888,7 +888,7 @@ def EOR_Zero_X(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     value ^= cpu.registers['A']
     cpu.registers['A'] = value
@@ -902,7 +902,7 @@ def EOR_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     value ^= cpu.registers['A']
     cpu.registers['A'] = value
@@ -916,7 +916,7 @@ def EOR_Absolute_X(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     value ^= cpu.registers['A']
     cpu.registers['A'] = value
@@ -930,7 +930,7 @@ def EOR_Absolute_Y(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     value ^= cpu.registers['A']
     cpu.registers['A'] = value
@@ -944,7 +944,7 @@ def EOR_Indirect_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     value ^= cpu.registers['A']
     cpu.registers['A'] = value
@@ -958,7 +958,7 @@ def EOR_Indirect_Y(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     value ^= cpu.registers['A']
     cpu.registers['A'] = value
@@ -972,7 +972,7 @@ def INC_Zero(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     value = (value + 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -986,7 +986,7 @@ def INC_Zero_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     value = (value + 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -1000,7 +1000,7 @@ def INC_Absolute(cpu):
     size = 3
     nCycles = 6
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     value = (value + 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -1014,7 +1014,7 @@ def INC_Absolute_X(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     value = (value + 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -1054,7 +1054,7 @@ def JMP_Absolute(cpu):
     size = 3
     nCycles = 3
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     advancePC(cpu, size)
     cpu.registers['PC'] = address
     return nCycles
@@ -1064,7 +1064,7 @@ def JMP_Indirect(cpu):
     size = 3
     nCycles = 5
 
-    address = addressingMode.Indirect(cpu)
+    address = addrmodes.Indirect(cpu)
     advancePC(cpu, size)
     cpu.registers['PC'] = address
     return nCycles
@@ -1074,7 +1074,7 @@ def JSR_Absolute(cpu):
     size = 3
     nCycles = 6
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     advancePC(cpu, 2)
     cpu.pushStack((cpu.registers['PC'] >> 8) & 0xFF)
     cpu.pushStack(cpu.registers['PC'] & 0xFF)
@@ -1098,7 +1098,7 @@ def LDA_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] = value
     advancePC(cpu, size)
@@ -1111,7 +1111,7 @@ def LDA_Zero_X(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] = value
     advancePC(cpu, size)
@@ -1124,7 +1124,7 @@ def LDA_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] = value
     advancePC(cpu, size)
@@ -1137,7 +1137,7 @@ def LDA_Absolute_X(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] = value
     advancePC(cpu, size)
@@ -1150,7 +1150,7 @@ def LDA_Absolute_Y(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] = value
     advancePC(cpu, size)
@@ -1163,7 +1163,7 @@ def LDA_Indirect_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] = value
     advancePC(cpu, size)
@@ -1176,7 +1176,7 @@ def LDA_Indirect_Y(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] = value
     advancePC(cpu, size)
@@ -1201,7 +1201,7 @@ def LDX_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     cpu.registers['X'] = value
     advancePC(cpu, size)
@@ -1214,7 +1214,7 @@ def LDX_Zero_Y(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_Y(cpu)
+    address = addrmodes.Zero_Y(cpu)
     value = cpu.readMemory(address)
     cpu.registers['X'] = value
     advancePC(cpu, size)
@@ -1227,7 +1227,7 @@ def LDX_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     cpu.registers['X'] = value
     advancePC(cpu, size)
@@ -1240,7 +1240,7 @@ def LDX_Absolute_Y(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     cpu.registers['X'] = value
     advancePC(cpu, size)
@@ -1265,7 +1265,7 @@ def LDY_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     cpu.registers['Y'] = value
     advancePC(cpu, size)
@@ -1278,7 +1278,7 @@ def LDY_Zero_X(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     cpu.registers['Y'] = value
     advancePC(cpu, size)
@@ -1291,7 +1291,7 @@ def LDY_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     cpu.registers['Y'] = value
     advancePC(cpu, size)
@@ -1304,7 +1304,7 @@ def LDY_Absolute_X(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     cpu.registers['Y'] = value
     advancePC(cpu, size)
@@ -1331,7 +1331,7 @@ def LSR_Zero(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x01)
     value >>= 1
@@ -1346,7 +1346,7 @@ def LSR_Zero_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x01)
     value >>= 1
@@ -1361,7 +1361,7 @@ def LSR_Absolute(cpu):
     size = 3
     nCycles = 6
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x01)
     value >>= 1
@@ -1376,7 +1376,7 @@ def LSR_Absolute_X(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x01)
     value >>= 1
@@ -1412,7 +1412,7 @@ def ORA_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     value |= cpu.registers['A']
     advancePC(cpu, size)
@@ -1426,7 +1426,7 @@ def ORA_Zero_X(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     value |= cpu.registers['A']
     advancePC(cpu, size)
@@ -1440,7 +1440,7 @@ def ORA_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     value |= cpu.registers['A']
     advancePC(cpu, size)
@@ -1454,7 +1454,7 @@ def ORA_Absolute_X(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     value |= cpu.registers['A']
     advancePC(cpu, size)
@@ -1468,7 +1468,7 @@ def ORA_Absolute_Y(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     value |= cpu.registers['A']
     advancePC(cpu, size)
@@ -1482,7 +1482,7 @@ def ORA_Indirect_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     value |= cpu.registers['A']
     advancePC(cpu, size)
@@ -1496,7 +1496,7 @@ def ORA_Indirect_Y(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     value |= cpu.registers['A']
     advancePC(cpu, size)
@@ -1570,7 +1570,7 @@ def ROL_Zero(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     setC(cpu, (value >> 7) & 1)
@@ -1586,7 +1586,7 @@ def ROL_Zero_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     setC(cpu, (value >> 7) & 1)
@@ -1602,7 +1602,7 @@ def ROL_Absolute(cpu):
     size = 3
     nCycles = 6
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     setC(cpu, (value >> 7) & 1)
@@ -1618,7 +1618,7 @@ def ROL_Absolute_X(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     setC(cpu, (value >> 7) & 1)
@@ -1650,7 +1650,7 @@ def ROR_Zero(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     carry = (cpu.getStatus(cpu.statusFlags['c']) << 7)
     setC(cpu, value & 0x01)
@@ -1666,7 +1666,7 @@ def ROR_Zero_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     carry = (cpu.getStatus(cpu.statusFlags['c']) << 7)
     setC(cpu, value & 0x01)
@@ -1682,7 +1682,7 @@ def ROR_Absolute(cpu):
     size = 3
     nCycles = 6
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     carry = (cpu.getStatus(cpu.statusFlags['c']) << 7)
     setC(cpu, value & 0x01)
@@ -1698,7 +1698,7 @@ def ROR_Absolute_X(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     carry = (cpu.getStatus(cpu.statusFlags['c']) << 7)
     setC(cpu, value & 0x01)
@@ -1756,7 +1756,7 @@ def SBC_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = cpu.registers['A'] - value - (1 - carry)
@@ -1774,7 +1774,7 @@ def SBC_Zero_X(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = cpu.registers['A'] - value - (1 - carry)
@@ -1792,7 +1792,7 @@ def SBC_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = cpu.registers['A'] - value - (1 - carry)
@@ -1810,7 +1810,7 @@ def SBC_Absolute_X(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = cpu.registers['A'] - value - (1 - carry)
@@ -1828,7 +1828,7 @@ def SBC_Absolute_Y(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = cpu.registers['A'] - value - (1 - carry)
@@ -1846,7 +1846,7 @@ def SBC_Indirect_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = cpu.registers['A'] - value - (1 - carry)
@@ -1864,7 +1864,7 @@ def SBC_Indirect_Y(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = cpu.registers['A'] - value - (1 - carry)
@@ -1909,7 +1909,7 @@ def STA_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     cpu.writeMemory(address, cpu.registers['A'])
     advancePC(cpu, size)
     return nCycles
@@ -1919,7 +1919,7 @@ def STA_Zero_X(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     cpu.writeMemory(address, cpu.registers['A'])
     advancePC(cpu, size)
     return nCycles
@@ -1929,7 +1929,7 @@ def STA_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     cpu.writeMemory(address, cpu.registers['A'])
     advancePC(cpu, size)
     return nCycles
@@ -1939,7 +1939,7 @@ def STA_Absolute_X(cpu):
     size = 3
     nCycles = 5
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     cpu.writeMemory(address, cpu.registers['A'])
     advancePC(cpu, size)
     return nCycles
@@ -1949,7 +1949,7 @@ def STA_Absolute_Y(cpu):
     size = 3
     nCycles = 5
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     cpu.writeMemory(address, cpu.registers['A'])
     advancePC(cpu, size)
     return nCycles
@@ -1959,7 +1959,7 @@ def STA_Indirect_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     cpu.writeMemory(address, cpu.registers['A'])
     advancePC(cpu, size)
     return nCycles
@@ -1969,7 +1969,7 @@ def STA_Indirect_Y(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     cpu.writeMemory(address, cpu.registers['A'])
     advancePC(cpu, size)
     return nCycles
@@ -1979,7 +1979,7 @@ def STX_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     cpu.writeMemory(address, cpu.registers['X'])
     advancePC(cpu, size)
     return nCycles
@@ -1989,7 +1989,7 @@ def STX_Zero_Y(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_Y(cpu)
+    address = addrmodes.Zero_Y(cpu)
     cpu.writeMemory(address, cpu.registers['X'])
     advancePC(cpu, size)
     return nCycles
@@ -1999,7 +1999,7 @@ def STX_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     cpu.writeMemory(address, cpu.registers['X'])
     advancePC(cpu, size)
     return nCycles
@@ -2009,7 +2009,7 @@ def STY_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     cpu.writeMemory(address, cpu.registers['Y'])
     advancePC(cpu, size)
     return nCycles
@@ -2019,7 +2019,7 @@ def STY_Zero_X(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     cpu.writeMemory(address, cpu.registers['Y'])
     advancePC(cpu, size)
     return nCycles
@@ -2029,7 +2029,7 @@ def STY_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     cpu.writeMemory(address, cpu.registers['Y'])
     advancePC(cpu, size)
     return nCycles
@@ -2109,7 +2109,7 @@ def DCP_Zero(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     value = (value - 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2126,7 +2126,7 @@ def DCP_Zero_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     value = (value - 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2143,7 +2143,7 @@ def DCP_Absolute(cpu):
     size = 3
     nCycles = 6
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     value = (value - 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2160,7 +2160,7 @@ def DCP_Absolute_X(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     value = (value - 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2177,7 +2177,7 @@ def DCP_Absolute_Y(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     value = (value - 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2194,7 +2194,7 @@ def DCP_Indirect_X(cpu):
     size = 2
     nCycles = 8
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     value = (value - 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2211,7 +2211,7 @@ def DCP_Indirect_Y(cpu):
     size = 2
     nCycles = 8
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     value = (value - 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2252,7 +2252,7 @@ def ISB_Zero(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     value = (value + 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2273,7 +2273,7 @@ def ISB_Zero_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     value = (value + 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2294,7 +2294,7 @@ def ISB_Absolute(cpu):
     size = 3
     nCycles = 6
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     value = (value + 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2315,7 +2315,7 @@ def ISB_Absolute_X(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     value = (value + 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2336,7 +2336,7 @@ def ISB_Absolute_Y(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     value = (value + 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2357,7 +2357,7 @@ def ISB_Indirect_X(cpu):
     size = 2
     nCycles = 8
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     value = (value + 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2378,7 +2378,7 @@ def ISB_Indirect_Y(cpu):
     size = 2
     nCycles = 8
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     value = (value + 1) & 0xFF
     cpu.writeMemory(address, value)
@@ -2399,7 +2399,7 @@ def LAX_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] = value
     cpu.registers['X'] = value
@@ -2414,7 +2414,7 @@ def LAX_Zero_Y(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_Y(cpu)
+    address = addrmodes.Zero_Y(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] = value
     cpu.registers['X'] = value
@@ -2429,7 +2429,7 @@ def LAX_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] = value
     cpu.registers['X'] = value
@@ -2444,7 +2444,7 @@ def LAX_Absolute_Y(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] = value
     cpu.registers['X'] = value
@@ -2459,7 +2459,7 @@ def LAX_Indirect_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] = value
     cpu.registers['X'] = value
@@ -2474,7 +2474,7 @@ def LAX_Indirect_Y(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     cpu.registers['A'] = value
     cpu.registers['X'] = value
@@ -2489,7 +2489,7 @@ def RLA_Zero(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     setC(cpu, (value >> 7) & 1)
@@ -2507,7 +2507,7 @@ def RLA_Zero_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     setC(cpu, (value >> 7) & 1)
@@ -2525,7 +2525,7 @@ def RLA_Absolute(cpu):
     size = 3
     nCycles = 6
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     setC(cpu, (value >> 7) & 1)
@@ -2543,7 +2543,7 @@ def RLA_Absolute_X(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     setC(cpu, (value >> 7) & 1)
@@ -2561,7 +2561,7 @@ def RLA_Absolute_Y(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     setC(cpu, (value >> 7) & 1)
@@ -2579,7 +2579,7 @@ def RLA_Indirect_X(cpu):
     size = 2
     nCycles = 8
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     setC(cpu, (value >> 7) & 1)
@@ -2597,7 +2597,7 @@ def RLA_Indirect_Y(cpu):
     size = 2
     nCycles = 8
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     setC(cpu, (value >> 7) & 1)
@@ -2615,7 +2615,7 @@ def RRA_Zero(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     carry = (cpu.getStatus(cpu.statusFlags['c']) << 7)
     setC(cpu, value & 0x01)
@@ -2639,7 +2639,7 @@ def RRA_Zero_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     carry = (cpu.getStatus(cpu.statusFlags['c']) << 7)
     setC(cpu, value & 0x01)
@@ -2663,7 +2663,7 @@ def RRA_Absolute(cpu):
     size = 3
     nCycles = 6
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     carry = (cpu.getStatus(cpu.statusFlags['c']) << 7)
     setC(cpu, value & 0x01)
@@ -2687,7 +2687,7 @@ def RRA_Absolute_X(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     carry = (cpu.getStatus(cpu.statusFlags['c']) << 7)
     setC(cpu, value & 0x01)
@@ -2711,7 +2711,7 @@ def RRA_Absolute_Y(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     carry = (cpu.getStatus(cpu.statusFlags['c']) << 7)
     setC(cpu, value & 0x01)
@@ -2735,7 +2735,7 @@ def RRA_Indirect_X(cpu):
     size = 2
     nCycles = 8
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     carry = (cpu.getStatus(cpu.statusFlags['c']) << 7)
     setC(cpu, value & 0x01)
@@ -2759,7 +2759,7 @@ def RRA_Indirect_Y(cpu):
     size = 2
     nCycles = 8
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     carry = (cpu.getStatus(cpu.statusFlags['c']) << 7)
     setC(cpu, value & 0x01)
@@ -2783,7 +2783,7 @@ def SAX_Zero(cpu):
     size = 2
     nCycles = 3
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.registers['X'] & cpu.registers['A']
     cpu.writeMemory(address, value)
     advancePC(cpu, size)
@@ -2795,7 +2795,7 @@ def SAX_Zero_Y(cpu):
     size = 2
     nCycles = 4
 
-    address = addressingMode.Zero_Y(cpu)
+    address = addrmodes.Zero_Y(cpu)
     value = cpu.registers['X'] & cpu.registers['A']
     cpu.writeMemory(address, value)
     advancePC(cpu, size)
@@ -2807,7 +2807,7 @@ def SAX_Absolute(cpu):
     size = 3
     nCycles = 4
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.registers['X'] & cpu.registers['A']
     cpu.writeMemory(address, value)
     advancePC(cpu, size)
@@ -2819,7 +2819,7 @@ def SAX_Indirect_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.registers['X'] & cpu.registers['A']
     cpu.writeMemory(address, value)
     advancePC(cpu, size)
@@ -2831,7 +2831,7 @@ def SLO_Zero(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x80)
     value <<= 1
@@ -2849,7 +2849,7 @@ def SLO_Zero_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x80)
     value <<= 1
@@ -2867,7 +2867,7 @@ def SLO_Absolute(cpu):
     size = 3
     nCycles = 6
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x80)
     value <<= 1
@@ -2885,7 +2885,7 @@ def SLO_Absolute_X(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x80)
     value <<= 1
@@ -2903,7 +2903,7 @@ def SLO_Absolute_Y(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x80)
     value <<= 1
@@ -2921,7 +2921,7 @@ def SLO_Indirect_X(cpu):
     size = 2
     nCycles = 8
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x80)
     value <<= 1
@@ -2939,7 +2939,7 @@ def SLO_Indirect_Y(cpu):
     size = 2
     nCycles = 8
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x80)
     value <<= 1
@@ -2957,7 +2957,7 @@ def SRE_Zero(cpu):
     size = 2
     nCycles = 5
 
-    address = addressingMode.Zero(cpu)
+    address = addrmodes.Zero(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x01)
     value >>= 1
@@ -2974,7 +2974,7 @@ def SRE_Zero_X(cpu):
     size = 2
     nCycles = 6
 
-    address = addressingMode.Zero_X(cpu)
+    address = addrmodes.Zero_X(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x01)
     value >>= 1
@@ -2991,7 +2991,7 @@ def SRE_Absolute(cpu):
     size = 3
     nCycles = 6
 
-    address = addressingMode.Absolute(cpu)
+    address = addrmodes.Absolute(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x01)
     value >>= 1
@@ -3008,7 +3008,7 @@ def SRE_Absolute_X(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_X(cpu)
+    address = addrmodes.Absolute_X(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x01)
     value >>= 1
@@ -3025,7 +3025,7 @@ def SRE_Absolute_Y(cpu):
     size = 3
     nCycles = 7
 
-    address = addressingMode.Absolute_Y(cpu)
+    address = addrmodes.Absolute_Y(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x01)
     value >>= 1
@@ -3042,7 +3042,7 @@ def SRE_Indirect_X(cpu):
     size = 2
     nCycles = 8
 
-    address = addressingMode.Indirect_X(cpu)
+    address = addrmodes.Indirect_X(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x01)
     value >>= 1
@@ -3059,7 +3059,7 @@ def SRE_Indirect_Y(cpu):
     size = 2
     nCycles = 8
 
-    address = addressingMode.Indirect_Y(cpu)
+    address = addrmodes.Indirect_Y(cpu)
     value = cpu.readMemory(address)
     setC(cpu, value & 0x01)
     value >>= 1
