@@ -7,7 +7,71 @@ from renderer import RendererManager
 
 
 class PPU:
-    """ NES PPU CHIP """
+    """
+    ***************************************************************************    
+                                 NES PPU CHIP
+                                (Ricoh RP2C07)
+
+    ***************************************************************************
+    OVERVIEW:
+        The NES PPU, or Picture Processing Unit, generates a composite video
+            signal with 240 lines of pixels, designed to be received by a
+            television. When the Famicom chipset was designed in the early
+            1980s, it was considered quite an advanced 2D picture generator
+            for video games.
+        It has its own address space, which typically contains 10 kilobytes
+            of memory: 8 kilobytes of ROM or RAM on the Game Pak
+            (possibly more with one of the common mappers) to store the
+            shapes of background and sprite tiles, plus 2 kilobytes of RAM
+            in the console to store a map or two. Two separate, smaller address
+            spaces hold a palette, which controls which colors are associated
+            to various indices, and OAM (Object Attribute Memory), which stores
+            the position, orientation, shape, and color of the sprites, or
+            independent moving objects. These are internal to the PPU itself,
+            and while the palette is made of static memory, OAM uses dynamic
+            memory (which will slowly decay if the PPU is not rendering data).
+
+    ***************************************************************************
+    PINOUT:
+                                        .-----.
+                            R/W     -> |01  40| --  +5
+                            CPU D0  <> |02  39| ->  ALE
+                            CPU D1  <> |03  38| <>  PPU AD0
+                            CPU D2  <> |04  37| <>  PPU AD1
+                            CPU D3  <> |05  36| <>  PPU AD2
+                            CPU D4  <> |06  35| <>  PPU AD3
+                            CPU D5  <> |07  34| <>  PPU AD4
+                            CPU D6  <> |08  33| <>  PPU AD5
+                            CPU D7  <> |09  32| <>  PPU AD6
+                            CPU A2  -> |10  31| <>  PPU AD7
+                            CPU A1  -> |11  30| ->  PPU A8
+                            CPU A0  -> |12  29| ->  PPU A9
+                            /CS     -> |13  28| ->  PPU A10
+                            EXT0    <> |14  27| ->  PPU A11
+                            EXT1    <> |15  26| ->  PPU A12
+                            EXT2    <> |16  25| ->  PPU A13
+                            EXT3    <> |17  24| ->  /RD
+                            CLK     -> |18  23| ->  /WR
+                            /INT    <- |19  22| <-  /RST
+                            GND     -- |20  21| ->  VOUT
+                                        `------'
+
+    ****************************************************************************
+    Notes:
+        - The NTSC video signal is made up of 262 scanlines, and 20 of those
+            are spent in vblank state. After the program has received an NMI,
+            it has about 2270 cycles to update the palette, sprites, and
+            nametables as necessary before rendering begins.
+        - On NTSC systems, the PPU divides the master clock by 4 while the CPU
+            uses the master clock divided by 12. Since both clocks are fed off
+            the same master clock, this means that there are exactly three PPU
+            ticks per CPU cycle, with no drifting over time (though the clock
+            alignment might vary depending on when you press the Reset button).
+        - On PAL systems, the PPU divides the master clock by 5 while the CPU
+            uses the master clock divided by 16. As a result, there are exactly
+            3.2 PPU ticks per CPU cycle.
+            
+     """
     class VolatileMemory:
         """ Volatile Memory of PPU like VRAM and SPRRAM """
         def __init__(self, size):
