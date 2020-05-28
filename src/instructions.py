@@ -40,10 +40,12 @@ def ADC_Immediate(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80)!=0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 0xFF)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -60,7 +62,9 @@ def ADC_Zero(cpu):
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80) != 0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 0xFF)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -77,7 +81,9 @@ def ADC_Zero_X(cpu):
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80) != 0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 255)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -94,7 +100,9 @@ def ADC_Absolute(cpu):
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80) != 0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 255)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -111,7 +119,9 @@ def ADC_Absolute_X(cpu):
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80) != 0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 255)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -128,14 +138,15 @@ def ADC_Absolute_Y(cpu):
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80) != 0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 255)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
     return nCycles
-
 
 
 def ADC_Indirect_X(cpu):
@@ -146,7 +157,9 @@ def ADC_Indirect_X(cpu):
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80)!=0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 255)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -163,7 +176,9 @@ def ADC_Indirect_Y(cpu):
     value = cpu.readMemory(address)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80) != 0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 255)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -176,7 +191,7 @@ def AND_Immediate(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.registers['A'] & cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.registers['A'] & cpu.readMemory(cpu.registers['PC'] + 1)
     cpu.registers['A'] = value
     advancePC(cpu, size)
     setN(cpu, value)
@@ -358,10 +373,11 @@ def BCC_Relative(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     value = rel_addr(value)
     if not cpu.getStatus(cpu.statusFlags['c']):
-        if (cpu.registers['PC'] & 0xFF00) != ((cpu.registers['PC'] + value) & 0xFF00):
+        if (cpu.registers['PC'] & 0xFF00) != (
+            (cpu.registers['PC'] + value) & 0xFF00):
             nCycles += 2
         else:
             nCycles += 1
@@ -374,10 +390,11 @@ def BCS_Relative(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     value = rel_addr(value)
     if cpu.getStatus(cpu.statusFlags['c']):
-        if (cpu.registers['PC'] & 0xFF00) != ((cpu.registers['PC'] + value) & 0xFF00):
+        if (cpu.registers['PC'] & 0xFF00) != (
+            (cpu.registers['PC'] + value) & 0xFF00):
             nCycles += 2
         else:
             nCycles += 1
@@ -390,10 +407,11 @@ def BEQ_Relative(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     value = rel_addr(value)
     if cpu.getStatus(cpu.statusFlags['z']):
-        if (cpu.registers['PC'] & 0xFF00) != ((cpu.registers['PC'] + value) & 0xFF00):
+        if (cpu.registers['PC'] & 0xFF00) != (
+            (cpu.registers['PC'] + value) & 0xFF00):
             nCycles += 2
         else:
             nCycles += 1
@@ -432,10 +450,11 @@ def BMI_Relative(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     value = rel_addr(value)
     if cpu.getStatus(cpu.statusFlags['n']):
-        if (cpu.registers['PC'] & 0xFF00) != ((cpu.registers['PC'] + value) & 0xFF00):
+        if (cpu.registers['PC'] & 0xFF00) != (
+            (cpu.registers['PC'] + value) & 0xFF00):
             nCycles += 2
         else:
             nCycles += 1
@@ -448,10 +467,11 @@ def BNE_Relative(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     value = rel_addr(value)
     if not cpu.getStatus(cpu.statusFlags['z']):
-        if (cpu.registers['PC'] & 0xFF00) != ((cpu.registers['PC'] + value) & 0xFF00):
+        if (cpu.registers['PC'] & 0xFF00) != (
+            (cpu.registers['PC'] + value) & 0xFF00):
             nCycles += 2
         else:
             nCycles += 1
@@ -464,11 +484,12 @@ def BPL_Relative(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     value = rel_addr(value)
     if not cpu.getStatus(cpu.statusFlags['n']):
         nCycles += 1
-        if (cpu.registers['PC'] & 0xFF00) != ((cpu.registers['PC'] + value) & 0xFF00):
+        if (cpu.registers['PC'] & 0xFF00) != (
+            (cpu.registers['PC'] + value) & 0xFF00):
             nCycles += 1
         #cpu.registers['PC'] += 1
         advancePC(cpu, value)
@@ -495,10 +516,11 @@ def BVC_Relative(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     value = rel_addr(value)
     if not cpu.getStatus(cpu.statusFlags['v']):
-        if (cpu.registers['PC'] & 0xFF00) != ((cpu.registers['PC'] + value) & 0xFF00):
+        if (cpu.registers['PC'] & 0xFF00) != (
+            (cpu.registers['PC'] + value) & 0xFF00):
             nCycles += 2
         else:
             nCycles += 1
@@ -511,10 +533,11 @@ def BVS_Relative(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     value = rel_addr(value)
     if cpu.getStatus(cpu.statusFlags['v']):
-        if (cpu.registers['PC'] & 0xFF00) != ((cpu.registers['PC'] + value) & 0xFF00):
+        if (cpu.registers['PC'] & 0xFF00) != (
+            (cpu.registers['PC'] + value) & 0xFF00):
             nCycles += 2
         else:
             nCycles += 1
@@ -563,7 +586,7 @@ def CMP_Immediate(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     value = cpu.registers['A'] - value
     advancePC(cpu, size)
     setC(cpu, 1 if value >= 0 else 0)
@@ -674,7 +697,7 @@ def CPX_Immediate(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     value = cpu.registers['X'] - value
     advancePC(cpu, size)
     setC(cpu, 1 if value >= 0 else 0)
@@ -715,7 +738,7 @@ def CPY_Immediate(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     value = cpu.registers['Y'] - value
     advancePC(cpu, size)
     setC(cpu, 1 if value >= 0 else 0)
@@ -838,7 +861,7 @@ def EOR_Immediate(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     value ^= cpu.registers['A']
     cpu.registers['A'] = value
     advancePC(cpu, size)
@@ -1063,7 +1086,7 @@ def LDA_Immediate(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     cpu.registers['A'] = value
     advancePC(cpu, size)
     setN(cpu, value)
@@ -1166,7 +1189,7 @@ def LDX_Immediate(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     cpu.registers['X'] = value
     advancePC(cpu, size)
     setN(cpu, value)
@@ -1230,7 +1253,7 @@ def LDY_Immediate(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     cpu.registers['Y'] = value
     advancePC(cpu, size)
     setN(cpu, value)
@@ -1376,7 +1399,7 @@ def ORA_Immediate(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     value |= cpu.registers['A']
     advancePC(cpu, size)
     cpu.registers['A'] = value
@@ -1715,13 +1738,14 @@ def SBC_Immediate(cpu):
     size = 2
     nCycles = 2
 
-    value = cpu.readMemory(cpu.registers['PC']+1)
+    value = cpu.readMemory(cpu.registers['PC'] + 1)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     #Todo: Verificar o (1 - carry) depois
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
@@ -1738,7 +1762,8 @@ def SBC_Zero(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
@@ -1755,7 +1780,8 @@ def SBC_Zero_X(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
@@ -1772,7 +1798,8 @@ def SBC_Absolute(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
@@ -1789,7 +1816,8 @@ def SBC_Absolute_X(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
@@ -1806,7 +1834,8 @@ def SBC_Absolute_Y(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
@@ -1823,7 +1852,8 @@ def SBC_Indirect_X(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
@@ -1840,7 +1870,8 @@ def SBC_Indirect_Y(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
@@ -2090,6 +2121,7 @@ def DCP_Zero(cpu):
 
     return nCycles
 
+
 def DCP_Zero_X(cpu):
     size = 2
     nCycles = 6
@@ -2105,6 +2137,7 @@ def DCP_Zero_X(cpu):
     setZ(cpu, value & 0xFF)
 
     return nCycles
+
 
 def DCP_Absolute(cpu):
     size = 3
@@ -2122,6 +2155,7 @@ def DCP_Absolute(cpu):
 
     return nCycles
 
+
 def DCP_Absolute_X(cpu):
     size = 3
     nCycles = 7
@@ -2137,6 +2171,7 @@ def DCP_Absolute_X(cpu):
     setZ(cpu, value & 0xFF)
 
     return nCycles
+
 
 def DCP_Absolute_Y(cpu):
     size = 3
@@ -2154,6 +2189,7 @@ def DCP_Absolute_Y(cpu):
 
     return nCycles
 
+
 def DCP_Indirect_X(cpu):
     size = 2
     nCycles = 8
@@ -2169,6 +2205,7 @@ def DCP_Indirect_X(cpu):
     setZ(cpu, value & 0xFF)
 
     return nCycles
+
 
 def DCP_Indirect_Y(cpu):
     size = 2
@@ -2186,12 +2223,14 @@ def DCP_Indirect_Y(cpu):
 
     return nCycles
 
+
 def DOP_Immediate(cpu):
     size = 2
     nCycles = 2
 
     advancePC(cpu, size)
     return nCycles
+
 
 def DOP_Zero(cpu):
     size = 2
@@ -2200,12 +2239,14 @@ def DOP_Zero(cpu):
     advancePC(cpu, size)
     return nCycles
 
+
 def DOP_Zero_X(cpu):
     size = 2
     nCycles = 4
 
     advancePC(cpu, size)
     return nCycles
+
 
 def ISB_Zero(cpu):
     size = 2
@@ -2219,12 +2260,14 @@ def ISB_Zero(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
 
     return nCycles
+
 
 def ISB_Zero_X(cpu):
     size = 2
@@ -2238,12 +2281,14 @@ def ISB_Zero_X(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
 
     return nCycles
+
 
 def ISB_Absolute(cpu):
     size = 3
@@ -2257,12 +2302,14 @@ def ISB_Absolute(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
 
     return nCycles
+
 
 def ISB_Absolute_X(cpu):
     size = 3
@@ -2276,12 +2323,14 @@ def ISB_Absolute_X(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
 
     return nCycles
+
 
 def ISB_Absolute_Y(cpu):
     size = 3
@@ -2295,12 +2344,14 @@ def ISB_Absolute_Y(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
 
     return nCycles
+
 
 def ISB_Indirect_X(cpu):
     size = 2
@@ -2314,12 +2365,14 @@ def ISB_Indirect_X(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
 
     return nCycles
+
 
 def ISB_Indirect_Y(cpu):
     size = 2
@@ -2333,12 +2386,14 @@ def ISB_Indirect_Y(cpu):
     tmp = cpu.registers['A'] - value - (1 - carry)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
-    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and ((cpu.registers['A'] ^ value) & 0x80) != 0))
+    setO(cpu, (((cpu.registers['A'] ^ tmp) & 0x80) != 0 and
+               ((cpu.registers['A'] ^ value) & 0x80) != 0))
     setC(cpu, 0 if tmp < 0 else 1)
     cpu.registers['A'] = (tmp & 0xFF)
     advancePC(cpu, size)
 
     return nCycles
+
 
 def LAX_Zero(cpu):
     size = 2
@@ -2354,6 +2409,7 @@ def LAX_Zero(cpu):
 
     return nCycles
 
+
 def LAX_Zero_Y(cpu):
     size = 2
     nCycles = 4
@@ -2367,6 +2423,7 @@ def LAX_Zero_Y(cpu):
     setZ(cpu, value)
 
     return nCycles
+
 
 def LAX_Absolute(cpu):
     size = 3
@@ -2382,6 +2439,7 @@ def LAX_Absolute(cpu):
 
     return nCycles
 
+
 def LAX_Absolute_Y(cpu):
     size = 3
     nCycles = 4
@@ -2395,6 +2453,7 @@ def LAX_Absolute_Y(cpu):
     setZ(cpu, value)
 
     return nCycles
+
 
 def LAX_Indirect_X(cpu):
     size = 2
@@ -2410,6 +2469,7 @@ def LAX_Indirect_X(cpu):
 
     return nCycles
 
+
 def LAX_Indirect_Y(cpu):
     size = 2
     nCycles = 6
@@ -2423,6 +2483,7 @@ def LAX_Indirect_Y(cpu):
     setZ(cpu, value)
 
     return nCycles
+
 
 def RLA_Zero(cpu):
     size = 2
@@ -2441,6 +2502,7 @@ def RLA_Zero(cpu):
 
     return nCycles
 
+
 def RLA_Zero_X(cpu):
     size = 2
     nCycles = 6
@@ -2457,6 +2519,7 @@ def RLA_Zero_X(cpu):
     cpu.writeMemory(address, value)
 
     return nCycles
+
 
 def RLA_Absolute(cpu):
     size = 3
@@ -2475,6 +2538,7 @@ def RLA_Absolute(cpu):
 
     return nCycles
 
+
 def RLA_Absolute_X(cpu):
     size = 3
     nCycles = 7
@@ -2491,6 +2555,7 @@ def RLA_Absolute_X(cpu):
     cpu.writeMemory(address, value)
 
     return nCycles
+
 
 def RLA_Absolute_Y(cpu):
     size = 3
@@ -2509,6 +2574,7 @@ def RLA_Absolute_Y(cpu):
 
     return nCycles
 
+
 def RLA_Indirect_X(cpu):
     size = 2
     nCycles = 8
@@ -2525,6 +2591,7 @@ def RLA_Indirect_X(cpu):
     cpu.writeMemory(address, value)
 
     return nCycles
+
 
 def RLA_Indirect_Y(cpu):
     size = 2
@@ -2543,6 +2610,7 @@ def RLA_Indirect_Y(cpu):
 
     return nCycles
 
+
 def RRA_Zero(cpu):
     size = 2
     nCycles = 5
@@ -2555,7 +2623,9 @@ def RRA_Zero(cpu):
     cpu.writeMemory(address, value)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80) != 0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 0xFF)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -2563,6 +2633,7 @@ def RRA_Zero(cpu):
     advancePC(cpu, size)
 
     return nCycles
+
 
 def RRA_Zero_X(cpu):
     size = 2
@@ -2576,7 +2647,9 @@ def RRA_Zero_X(cpu):
     cpu.writeMemory(address, value)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80) != 0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 0xFF)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -2584,6 +2657,7 @@ def RRA_Zero_X(cpu):
     advancePC(cpu, size)
 
     return nCycles
+
 
 def RRA_Absolute(cpu):
     size = 3
@@ -2597,7 +2671,9 @@ def RRA_Absolute(cpu):
     cpu.writeMemory(address, value)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80) != 0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 0xFF)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -2605,6 +2681,7 @@ def RRA_Absolute(cpu):
     advancePC(cpu, size)
 
     return nCycles
+
 
 def RRA_Absolute_X(cpu):
     size = 3
@@ -2618,7 +2695,9 @@ def RRA_Absolute_X(cpu):
     cpu.writeMemory(address, value)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80) != 0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 0xFF)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -2626,6 +2705,7 @@ def RRA_Absolute_X(cpu):
     advancePC(cpu, size)
 
     return nCycles
+
 
 def RRA_Absolute_Y(cpu):
     size = 3
@@ -2639,7 +2719,9 @@ def RRA_Absolute_Y(cpu):
     cpu.writeMemory(address, value)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80) != 0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 0xFF)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -2647,6 +2729,7 @@ def RRA_Absolute_Y(cpu):
     advancePC(cpu, size)
 
     return nCycles
+
 
 def RRA_Indirect_X(cpu):
     size = 2
@@ -2660,7 +2743,9 @@ def RRA_Indirect_X(cpu):
     cpu.writeMemory(address, value)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80) != 0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 0xFF)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -2668,6 +2753,7 @@ def RRA_Indirect_X(cpu):
     advancePC(cpu, size)
 
     return nCycles
+
 
 def RRA_Indirect_Y(cpu):
     size = 2
@@ -2681,7 +2767,9 @@ def RRA_Indirect_Y(cpu):
     cpu.writeMemory(address, value)
     carry = cpu.getStatus(cpu.statusFlags['c'])
     tmp = value + cpu.registers['A'] + carry
-    setO(cpu, not(((cpu.registers['A'] ^ value) & 0x80) != 0) and (((cpu.registers['A'] ^ tmp) & 0x80)))
+    setO(
+        cpu, not (((cpu.registers['A'] ^ value) & 0x80) != 0)
+        and (((cpu.registers['A'] ^ tmp) & 0x80)))
     setC(cpu, tmp > 0xFF)
     setN(cpu, tmp)
     setZ(cpu, tmp & 0xFF)
@@ -2689,6 +2777,7 @@ def RRA_Indirect_Y(cpu):
     advancePC(cpu, size)
 
     return nCycles
+
 
 def SAX_Zero(cpu):
     size = 2
@@ -2701,6 +2790,7 @@ def SAX_Zero(cpu):
 
     return nCycles
 
+
 def SAX_Zero_Y(cpu):
     size = 2
     nCycles = 4
@@ -2711,6 +2801,7 @@ def SAX_Zero_Y(cpu):
     advancePC(cpu, size)
 
     return nCycles
+
 
 def SAX_Absolute(cpu):
     size = 3
@@ -2723,6 +2814,7 @@ def SAX_Absolute(cpu):
 
     return nCycles
 
+
 def SAX_Indirect_X(cpu):
     size = 2
     nCycles = 6
@@ -2733,6 +2825,7 @@ def SAX_Indirect_X(cpu):
     advancePC(cpu, size)
 
     return nCycles
+
 
 def SLO_Zero(cpu):
     size = 2
@@ -2751,6 +2844,7 @@ def SLO_Zero(cpu):
 
     return nCycles
 
+
 def SLO_Zero_X(cpu):
     size = 2
     nCycles = 6
@@ -2767,6 +2861,7 @@ def SLO_Zero_X(cpu):
     setZ(cpu, cpu.registers['A'])
 
     return nCycles
+
 
 def SLO_Absolute(cpu):
     size = 3
@@ -2785,6 +2880,7 @@ def SLO_Absolute(cpu):
 
     return nCycles
 
+
 def SLO_Absolute_X(cpu):
     size = 3
     nCycles = 7
@@ -2801,6 +2897,7 @@ def SLO_Absolute_X(cpu):
     setZ(cpu, cpu.registers['A'])
 
     return nCycles
+
 
 def SLO_Absolute_Y(cpu):
     size = 3
@@ -2819,6 +2916,7 @@ def SLO_Absolute_Y(cpu):
 
     return nCycles
 
+
 def SLO_Indirect_X(cpu):
     size = 2
     nCycles = 8
@@ -2835,6 +2933,7 @@ def SLO_Indirect_X(cpu):
     setZ(cpu, cpu.registers['A'])
 
     return nCycles
+
 
 def SLO_Indirect_Y(cpu):
     size = 2
@@ -2853,6 +2952,7 @@ def SLO_Indirect_Y(cpu):
 
     return nCycles
 
+
 def SRE_Zero(cpu):
     size = 2
     nCycles = 5
@@ -2868,6 +2968,7 @@ def SRE_Zero(cpu):
     setN(cpu, cpu.registers['A'])
 
     return nCycles
+
 
 def SRE_Zero_X(cpu):
     size = 2
@@ -2885,6 +2986,7 @@ def SRE_Zero_X(cpu):
 
     return nCycles
 
+
 def SRE_Absolute(cpu):
     size = 3
     nCycles = 6
@@ -2900,6 +3002,7 @@ def SRE_Absolute(cpu):
     setN(cpu, cpu.registers['A'])
 
     return nCycles
+
 
 def SRE_Absolute_X(cpu):
     size = 3
@@ -2917,6 +3020,7 @@ def SRE_Absolute_X(cpu):
 
     return nCycles
 
+
 def SRE_Absolute_Y(cpu):
     size = 3
     nCycles = 7
@@ -2932,6 +3036,7 @@ def SRE_Absolute_Y(cpu):
     setN(cpu, cpu.registers['A'])
 
     return nCycles
+
 
 def SRE_Indirect_X(cpu):
     size = 2
@@ -2949,6 +3054,7 @@ def SRE_Indirect_X(cpu):
 
     return nCycles
 
+
 def SRE_Indirect_Y(cpu):
     size = 2
     nCycles = 8
@@ -2965,12 +3071,14 @@ def SRE_Indirect_Y(cpu):
 
     return nCycles
 
+
 def TOP_Absolute(cpu):
     size = 3
     nCycles = 4
 
     advancePC(cpu, size)
     return nCycles
+
 
 def TOP_Absolute_X(cpu):
     size = 3

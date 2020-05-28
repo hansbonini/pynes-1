@@ -22,11 +22,11 @@ class Console:
         try:
             self.CPU = CPU(self)
         except:
-            raise Exception("Couldn't initialize CPU") 
-        #try:      
+            raise Exception("Couldn't initialize CPU")
+        #try:
         self.PPU = PPU(self)
         #except:
-        #    raise Exception("Couldn't initialize PPU")      
+        #    raise Exception("Couldn't initialize PPU")
 
     def powerOn(self):
         if self.THREAD_MODE == "SINGLE":
