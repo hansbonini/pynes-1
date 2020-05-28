@@ -81,6 +81,7 @@ class PygameRenderer:
             l.clear()
             del l
             i+=1
+        pygame.display.flip()
 
     def blit(self):
         tl = self.layers.__len__()

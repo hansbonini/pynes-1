@@ -1,10 +1,11 @@
 import pygame
+from array import array
 
 KeysBuffer__=0
 ReadNumber__=0
 LastWrote___=0
 
-keys=[0]*255
+keys=array('B', [0x00]*255)
 
 def Strobe():
 	global KeysBuffer__, ReadNumber__, LastWrote___

@@ -5,8 +5,8 @@ from array import array
 
 from renderer import RendererManager
 
-class PPU:
 
+class PPU:
     class VolatileMemory:
         def __init__(self, size):
             self.ram = array('B', [0x00] * size)
@@ -21,10 +21,10 @@ class PPU:
         def __init__(self, console):
             self.status = False
             self._console = console
-        
+
         def enter(self):
             if self._console.PPU.NMI:
-                self._console.CPU.InterruptRequest = 0x4E # N
+                self._console.CPU.InterruptRequest = 0x4E  # N
             self.status = True
             while True:
                 try:
@@ -69,70 +69,38 @@ class PPU:
         self.ppuMirroring = 0
         self.addressMirroring = 0
 
-        self.colorPallete = [(0x75, 0x75, 0x75),
-                             (0x27, 0x1B, 0x8F),
-                             (0x00, 0x00, 0xAB),
-                             (0x47, 0x00, 0x9F),
-                             (0x8F, 0x00, 0x77),
-                             (0xAB, 0x00, 0x13),
-                             (0xA7, 0x00, 0x00),
-                             (0x7F, 0x0B, 0x00),
-                             (0x43, 0x2F, 0x00),
-                             (0x00, 0x47, 0x00),
-                             (0x00, 0x51, 0x00),
-                             (0x00, 0x3F, 0x17),
-                             (0x1B, 0x3F, 0x5F),
-                             (0x00, 0x00, 0x00),
-                             (0x00, 0x00, 0x00),
-                             (0x00, 0x00, 0x00),
-                             (0xBC, 0xBC, 0xBC),
-                             (0x00, 0x73, 0xEF),
-                             (0x23, 0x3B, 0xEF),
-                             (0x83, 0x00, 0xF3),
-                             (0xBF, 0x00, 0xBF),
-                             (0xE7, 0x00, 0x5B),
-                             (0xDB, 0x2B, 0x00),
-                             (0xCB, 0x4F, 0x0F),
-                             (0x8B, 0x73, 0x00),
-                             (0x00, 0x97, 0x00),
-                             (0x00, 0xAB, 0x00),
-                             (0x00, 0x93, 0x3B),
-                             (0x00, 0x83, 0x8B),
-                             (0x00, 0x00, 0x00),
-                             (0x00, 0x00, 0x00),
-                             (0x00, 0x00, 0x00),
-                             (0xFF, 0xFF, 0xFF),
-                             (0x3F, 0xBF, 0xFF),
-                             (0x5F, 0x97, 0xFF),
-                             (0xA7, 0x8B, 0xFD),
-                             (0xF7, 0x7B, 0xFF),
-                             (0xFF, 0x77, 0xB7),
-                             (0xFF, 0x77, 0x63),
-                             (0xFF, 0x9B, 0x3B),
-                             (0xF3, 0xBF, 0x3F),
-                             (0x83, 0xD3, 0x13),
-                             (0x4F, 0xDF, 0x4B),
-                             (0x58, 0xF8, 0x98),
-                             (0x00, 0xEB, 0xDB),
-                             (0x00, 0x00, 0x00),
-                             (0x00, 0x00, 0x00),
-                             (0x00, 0x00, 0x00),
-                             (0xFF, 0xFF, 0xFF),
-                             (0xAB, 0xE7, 0xFF),
-                             (0xC7, 0xD7, 0xFF),
-                             (0xD7, 0xCB, 0xFF),
-                             (0xFF, 0xC7, 0xFF),
-                             (0xFF, 0xC7, 0xDB),
-                             (0xFF, 0xBF, 0xB3),
-                             (0xFF, 0xDB, 0xAB),
-                             (0xFF, 0xE7, 0xA3),
-                             (0xE3, 0xFF, 0xA3),
-                             (0xAB, 0xF3, 0xBF),
-                             (0xB3, 0xFF, 0xCF),
-                             (0x9F, 0xFF, 0xF3),
-                             (0x00, 0x00, 0x00),
-                             (0x00, 0x00, 0x00),
-                             (0x00, 0x00, 0x00)]
+        self.colorPallete = [(0x75, 0x75, 0x75), (0x27, 0x1B, 0x8F),
+                             (0x00, 0x00, 0xAB), (0x47, 0x00, 0x9F),
+                             (0x8F, 0x00, 0x77), (0xAB, 0x00, 0x13),
+                             (0xA7, 0x00, 0x00), (0x7F, 0x0B, 0x00),
+                             (0x43, 0x2F, 0x00), (0x00, 0x47, 0x00),
+                             (0x00, 0x51, 0x00), (0x00, 0x3F, 0x17),
+                             (0x1B, 0x3F, 0x5F), (0x00, 0x00, 0x00),
+                             (0x00, 0x00, 0x00), (0x00, 0x00, 0x00),
+                             (0xBC, 0xBC, 0xBC), (0x00, 0x73, 0xEF),
+                             (0x23, 0x3B, 0xEF), (0x83, 0x00, 0xF3),
+                             (0xBF, 0x00, 0xBF), (0xE7, 0x00, 0x5B),
+                             (0xDB, 0x2B, 0x00), (0xCB, 0x4F, 0x0F),
+                             (0x8B, 0x73, 0x00), (0x00, 0x97, 0x00),
+                             (0x00, 0xAB, 0x00), (0x00, 0x93, 0x3B),
+                             (0x00, 0x83, 0x8B), (0x00, 0x00, 0x00),
+                             (0x00, 0x00, 0x00), (0x00, 0x00, 0x00),
+                             (0xFF, 0xFF, 0xFF), (0x3F, 0xBF, 0xFF),
+                             (0x5F, 0x97, 0xFF), (0xA7, 0x8B, 0xFD),
+                             (0xF7, 0x7B, 0xFF), (0xFF, 0x77, 0xB7),
+                             (0xFF, 0x77, 0x63), (0xFF, 0x9B, 0x3B),
+                             (0xF3, 0xBF, 0x3F), (0x83, 0xD3, 0x13),
+                             (0x4F, 0xDF, 0x4B), (0x58, 0xF8, 0x98),
+                             (0x00, 0xEB, 0xDB), (0x00, 0x00, 0x00),
+                             (0x00, 0x00, 0x00), (0x00, 0x00, 0x00),
+                             (0xFF, 0xFF, 0xFF), (0xAB, 0xE7, 0xFF),
+                             (0xC7, 0xD7, 0xFF), (0xD7, 0xCB, 0xFF),
+                             (0xFF, 0xC7, 0xFF), (0xFF, 0xC7, 0xDB),
+                             (0xFF, 0xBF, 0xB3), (0xFF, 0xDB, 0xAB),
+                             (0xFF, 0xE7, 0xA3), (0xE3, 0xFF, 0xA3),
+                             (0xAB, 0xF3, 0xBF), (0xB3, 0xFF, 0xCF),
+                             (0x9F, 0xFF, 0xF3), (0x00, 0x00, 0x00),
+                             (0x00, 0x00, 0x00), (0x00, 0x00, 0x00)]
 
         #try:
         self.renderer = RendererManager(self.console.RENDERER_TYPE)
@@ -149,12 +117,11 @@ class PPU:
         super(PPU, self).__init__()
 
     def load_vram_data(self):
-        maxdata = self.console.cartridge.chrRomData.__len__()
-        k = 0
-        while k < maxdata:
+        maxdata = list(range(len(self.console.cartridge.chrRomData)))
+        for k in maxdata:
             v = self.console.cartridge.chrRomData[k]
             self.VRAM.write(k, v)
-            k += 1
+        del maxdata
         self.renderer.display.reset()
 
     def setMirroring(self, mirroring):
@@ -297,7 +264,7 @@ class PPU:
         return value
 
     def writeSprRam(self, value):
-        self.SPRRAM.write(self.spriteRamAddr,value)
+        self.SPRRAM.write(self.spriteRamAddr, value)
         self.spriteRamAddr = (self.spriteRamAddr + 1) & 0xFF
 
     def writeSprRamDMA(self, value):
@@ -328,7 +295,6 @@ class PPU:
 
         if self.showSprites:
             self.drawSprites(self.console.CPU.scanline)
-            
 
     def drawBackground(self, scanline):
         tileY = int(scanline / 8)
@@ -349,16 +315,18 @@ class PPU:
             fromByte = 0
             toByte = 8
 
-            ppuScrollFlag = (self.ppuScrollX %8)
+            ppuScrollFlag = (self.ppuScrollX % 8)
             if ppuScrollFlag != 0:
                 if i == 0:
                     toByte = 7 - (ppuScrollFlag)
                 if i == (maxTiles - 1):
                     fromByte = 8 - (ppuScrollFlag)
 
-            ptrAddress = self.VRAM.read(v + int(tileY*0x20))
-            pattern1 = self.VRAM.read(self.backgroundPatternTable + (ptrAddress*16) + Y)
-            pattern2 = self.VRAM.read(self.backgroundPatternTable + (ptrAddress*16) + Y + 8)
+            ptrAddress = self.VRAM.read(v + int(tileY * 0x20))
+            pattern1 = self.VRAM.read(self.backgroundPatternTable +
+                                      (ptrAddress * 16) + Y)
+            pattern2 = self.VRAM.read(self.backgroundPatternTable +
+                                      (ptrAddress * 16) + Y + 8)
             # blockX e blockY sao as coordenadas em relacao ao block
             blockX = i % 4
             blockY = tileY % 4
@@ -419,7 +387,8 @@ class PPU:
             if spriteY <= scanline < spriteY + self.spriteSize:
                 sprloop = array('B', list(range(4)))
                 for i in sprloop:
-                    secondaryOAM[indexSecondaryOAM + i] = self.SPRRAM.read(currentSprite+i)
+                    secondaryOAM[indexSecondaryOAM +
+                                 i] = self.SPRRAM.read(currentSprite + i)
                 indexSecondaryOAM += 4
                 numberSpritesPerScanline += 1
                 del sprloop
@@ -440,18 +409,19 @@ class PPU:
             Y = scanline - spriteY
 
             ptrAddress = secondaryOAM[currentSprite + 1]
-            patAddress = self.spritePatternTable + (ptrAddress * 16) + ((7 - Y) if flipVertical else Y)
+            patAddress = self.spritePatternTable + (ptrAddress * 16) + (
+                (7 - Y) if flipVertical else Y)
             pattern1 = self.VRAM.read(patAddress)
             pattern2 = self.VRAM.read(patAddress + 8)
             colorIndex = 0x3F10
 
-            colorIndex |= ((secondaryOAM[currentSprite +2] & 0x3) << 2)
+            colorIndex |= ((secondaryOAM[currentSprite + 2] & 0x3) << 2)
 
             sprloop = array('B', range(8))
             for j in sprloop:
                 if flipHorizontal:
                     colorIndexFinal = (pattern1 >> j) & 0x1
-                    colorIndexFinal |= ((pattern2 >> j) & 0x1 ) << 1
+                    colorIndexFinal |= ((pattern2 >> j) & 0x1) << 1
                 else:
                     colorIndexFinal = (pattern1 >> (7 - j)) & 0x1
                     colorIndexFinal |= ((pattern2 >> (7 - j)) & 0x1) << 1
@@ -459,15 +429,20 @@ class PPU:
                 colorIndexFinal += colorIndex
                 if (colorIndexFinal % 4) == 0:
                     colorIndexFinal = 0x3F00
-                color = self.colorPallete[(self.VRAM.read(colorIndexFinal) & 0x3F)]
+                color = self.colorPallete[(self.VRAM.read(colorIndexFinal)
+                                           & 0x3F)]
 
                 # Add Transparency
                 if color == self.colorPallete[self.VRAM.read(0x3F10)]:
-                    color += (0,)
+                    color += (0, )
 
-                self.renderer.display.LAYER_A.write(spriteX + j, spriteY + Y, color)
-                checkColor=self.renderer.display.LAYER_A.read(spriteX + j, spriteY + Y)
-                if self.showBackground and not(self.spriteHitOccured) and currentSprite == 0 and checkColor == bytes(color):
+                self.renderer.display.LAYER_A.write(spriteX + j, spriteY + Y,
+                                                    color)
+                checkColor = self.renderer.display.LAYER_A.read(
+                    spriteX + j, spriteY + Y)
+                if self.showBackground and not (
+                        self.spriteHitOccured
+                ) and currentSprite == 0 and checkColor == bytes(color):
                     self.sprite0Hit = True
                     self.spriteHitOccured = True
             del sprloop
