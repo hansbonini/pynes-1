@@ -4,13 +4,12 @@ import time
 from array import array
 
 from renderer import RendererManager
-""" NES PPU CHIP """
 
 
 class PPU:
-    """ Volatile Memory of PPU like VRAM and SPRRAM """
+    """ NES PPU CHIP """
     class VolatileMemory:
-        """ Initialize a Volatile Memory of desired size """
+        """ Volatile Memory of PPU like VRAM and SPRRAM """
         def __init__(self, size):
             self.ram = array('B', [0x00] * size)
 
@@ -24,10 +23,8 @@ class PPU:
         def write(self, a=0x0, v=0x0):
             self.ram[a] = v
 
-    """ Vertical Blank """
-
     class VBlank:
-        """ Initialize VBLANK """
+        """ Vertical Blank """
         def __init__(self, console):
             self.status = False
             self._console = console
@@ -51,16 +48,13 @@ class PPU:
             self.status = False
             self._console.PPU.renderer.display.clear()
 
-    """ Horizontal Blank - not implemented yet """
-
     class HBlank:
+        """ Horizontal Blank - not implemented yet """
         def __init__(self, console):
             pass
 
-    """ Color Pallete """
-
     class Pallete:
-        """ Initialize NES colors """
+        """ Color Pallete """
         def __init__(self, console):
             self._console = console
             self.colors = [(0x75, 0x75, 0x75), (0x27, 0x1B, 0x8F),
@@ -116,10 +110,8 @@ class PPU:
             else:
                 self._console.PPU.VRAM.write(address, value)
 
-    """ Background Layer of PPU """
-
     class Background:
-        """ Initialize Background Layer """
+        """ Background Layer of PPU """
         def __init__(self, console):
             self._console = console
             self.show = False
@@ -209,10 +201,8 @@ class PPU:
                 del k
             del tiles
 
-    """ Sprites Layer of PPU """
-
     class Sprite:
-        """ Initialize Sprites Layer """
+        """ Sprites Layer of PPU """
         def __init__(self, console):
             self._console = console
             self.show = False
