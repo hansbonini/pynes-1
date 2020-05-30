@@ -359,9 +359,9 @@ class CPU:
             self.console.PPU.writeSprRamDMA(value)
             self.RAM.write(address, value)
         elif address == 0x4016 or address == 0x4017:
-            if joypad.LastWrote___ == 1 and value == 0:
-                joypad.ReadNumber__ = 0
-            joypad.LastWrote___ = value
+            #if joypad.LastWrote___ == 1 and value == 0:
+             #   joypad.ReadNumber__ = 0
+            #joypad.LastWrote___ = 0x00
             self.RAM.write(address, value)
         elif 0x6000 <= address < 0x8000:
             pass  # SRAM not implemented yet
@@ -383,8 +383,9 @@ class CPU:
                 value = self.console.PPU.readVRAM()
             self.RAM.write(address, value)
         elif address == 0x4016:
-            joypad.Strobe()
-            value = joypad.KeysBuffer__
+            #joypad.Strobe()
+            #value = joypad.KeysBuffer__
+            value = 0x00
         elif 0x4000 < address < 0x4020:
             value = self.RAM.read(address)
         elif 0x6000 <= address < 0x8000:
@@ -427,7 +428,7 @@ class CPU:
         self.z = 0
         while True:
 
-            pygame.event.poll()
+            #pygame.event.poll()
 
             # Interrupts
             if self.InterruptRequest != 0x00:
@@ -445,9 +446,9 @@ class CPU:
             cyclesCounter = self.clock.value
 
             if self.clock.value >= 113:
-                joypad.keys = pygame.key.get_pressed()
-                if joypad.keys[pygame.K_ESCAPE] == 1:
-                    exit()
+                #joypad.keys = pygame.key.get_pressed()
+                #if joypad.keys[pygame.K_ESCAPE] == 1:
+                #    exit()
                 self.clock.value = 0
                 if self.console.PPU.VBLANK.status:
                     self.console.PPU.VBLANK.exit()

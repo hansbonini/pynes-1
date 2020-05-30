@@ -11,7 +11,7 @@ class Console:
         romPath = sys.argv[1]
 
         self.cartridge = romLoader(romPath)
-        self.RENDERER_TYPE = "pygame"
+        self.RENDERER_TYPE = "sdl2"
         self.THREAD_MODE = "SINGLE"
 
         try:
